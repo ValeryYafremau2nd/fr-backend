@@ -1,3 +1,6 @@
+.env
+rds-combined-ca-bundle.pem
+
 # Logs
 logs
 *.log
