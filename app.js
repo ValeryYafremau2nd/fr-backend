@@ -26,7 +26,7 @@ dotenv.config();
 const app = express()
 app.enable('trust proxy');
 app.use(helmet())
-const port = 3000
+const port = 80
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
