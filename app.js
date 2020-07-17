@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 const xss = require('xss-clean');
+const req = require('sync-request');
 const fs = require('fs');
 const hpp = require('hpp');
 const compression = require('compression');
@@ -22,7 +23,6 @@ const bodyParser = require('body-parser');
 const crypto = require('crypto');*/
 
 dotenv.config();
-
 const app = express()
 app.enable('trust proxy');
 app.use(helmet())
@@ -53,7 +53,7 @@ mongoose
   .connect(process.env.DB_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    sslCA: [fs.readFileSync('rds-combined-ca-bundle.pem')]
+    sslCA: [req('GET', 'https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem').body.toString()]
   })
   .then(() => console.log('DB connection successful!'));
 
