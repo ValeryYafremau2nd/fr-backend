@@ -25,7 +25,6 @@ dotenv.config();
 
 const app = express()
 app.enable('trust proxy');
-app.use(cors())
 app.use(helmet())
 const port = process.env.PORT || 3000;
 if (process.env.NODE_ENV === 'development') {
@@ -46,6 +45,7 @@ app.use(hpp({
     whitelist: []
 }))
 app.use(compression())
+app.use(cors())
 app.use(bodyParser.json())
 app.use(cookieParser())
 
