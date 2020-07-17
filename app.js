@@ -26,7 +26,7 @@ dotenv.config();
 const app = express()
 app.enable('trust proxy');
 app.use(helmet())
-const port = 80
+const port = process.env.PORT || 3000;
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
@@ -52,7 +52,8 @@ app.use(cookieParser())
 mongoose
   .connect(process.env.DB_URL, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    sslCA: [fs.readFileSync('rds-combined-ca-bundle.pem')]
   })
   .then(() => console.log('DB connection successful!'));
 
