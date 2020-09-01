@@ -322,6 +322,6 @@ app.get('/teams/:id', async (req, res) => {
 
 https.createServer(
   {
-    key: fs.readFileSync('ssl.key'),
-    cert: fs.readFileSync('ssl.cert')
+    /*key: fs.readFileSync('ssl.key'),
+    cert: fs.readFileSync('ssl.cert')*/
   }, );(app).listen(port, () => console.log(`Listening on port ${port}!`))
