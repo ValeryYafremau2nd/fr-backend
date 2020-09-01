@@ -77,7 +77,6 @@ app.get('/test', function (req, res) {
 let users = [];
 app.post('/subscribe', authController.protect, async (req, res) => {
   const subscription = req.body;
-  console.log(1)
   await Favourite.addSubscription(req.user.id, subscription)
   res.status(201).json({});
   const payload = JSON.stringify({
@@ -193,7 +192,6 @@ const pushNotifications = (subscription, team1='team1', team2='team2', minutes='
 
 app.delete('/favourite/team/:id', authController.protect, async (req, res) => {
   const team = await Favourite.deleteTeam(req.user.id, +req.params.id);
-  console.log(team)
   res.json({
     status: 'success',
     data: team
@@ -209,7 +207,6 @@ app.get('/favourite/leagues', authController.protect, async (req, res) => {
 })
 app.get('/favourite/matches', authController.protect, async (req, res) => {
   const matches = await Favourite.getMatches(req.user.id);
-  console.log(matches)
   res.json({
     status: 'success',
     length: matches.length,
@@ -218,7 +215,6 @@ app.get('/favourite/matches', authController.protect, async (req, res) => {
 })
 app.get('/favourite/teams', authController.protect, async (req, res) => {
   const teams = await Favourite.getTeams(req.user.id);
-  console.log(teams)
   res.json({
     status: 'success',
     length: teams.length,
@@ -227,7 +223,6 @@ app.get('/favourite/teams', authController.protect, async (req, res) => {
 })
 app.get('/timestamps', authController.protect, async (req, res) => {
   const timestamps = await Favourite.getTimestamps(req.user.id);
-  console.log(123)
   res.json({
     status: 'success',
     length: timestamps.length,
@@ -242,7 +237,6 @@ app.delete('/favourite/league/:id', authController.protect, async (req, res) => 
   })
 })
 app.delete('/favourite/match/:id', authController.protect, async (req, res) => {
-  console.log(req.params.id)
   const match = await Favourite.deleteMatch(req.user.id, +req.params.id);
   res.json({
     status: 'success',
@@ -250,7 +244,6 @@ app.delete('/favourite/match/:id', authController.protect, async (req, res) => {
   })
 })
 app.delete('/timestamp/:id', authController.protect, async (req, res) => {
-  console.log(req)
   const timestamp = await Favourite.deleteTimestamp(req.user.id, req.params.id);
   res.json({
     status: 'success',
@@ -259,7 +252,6 @@ app.delete('/timestamp/:id', authController.protect, async (req, res) => {
 })
 app.post('/favourite/team', authController.protect, async (req, res) => {
   const team = await Favourite.addTeam(req.user.id, req.body.team);
-  console.log(team)
   res.json({
     status: 'success',
     data: team
@@ -280,7 +272,6 @@ app.post('/favourite/match', authController.protect, async (req, res) => {
   })
 })
 app.post('/timestamp', authController.protect, async (req, res) => {
-  console.log('delete timestamp')
   const timestamp = await Favourite.addTimestamp(req.user.id, req.body.timestamp);
   res.json({
     status: 'success',
@@ -292,9 +283,7 @@ app.get('/leagues/:id/strikers', authController.protect, (req, res) => res.json(
 
 
 app.get('/leagues/:id/matches', authController.protect, async (req, res, id) => {
-  console.log(req.user)
   const matches = await Compression.getMatches(+req.params.id, req.user.id);
-  console.log(matches)
   res.json({
     status: 'success',
     results: matches.length,
@@ -304,7 +293,6 @@ app.get('/leagues/:id/matches', authController.protect, async (req, res, id) => 
 
 app.get('/leagues/:id/standings', authController.protect, async (req, res) => {
   const standings = await Compression.getStandings(+req.params.id, req.user.id);
-  console.log(standings)
   res.json({
     status: 'success',
     results: standings.length,
