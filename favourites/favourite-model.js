@@ -13,6 +13,8 @@ const favouriteSchema = new mongoose.Schema(
         type: String,
         unique: true
       }*/],
+      timestamps: [],
+      subscription: '' 
     }
 );
 
@@ -79,7 +81,7 @@ favouriteSchema.statics.getMatches = async function(user) {
       }
   }, {
       $sort: {
-          _id: -1
+          _id: 1
       }
     }])
 };
@@ -172,6 +174,54 @@ favouriteSchema.statics.addTeam = function(user, team) {
       upsert: true
     });
   };
+
+favouriteSchema.statics.deleteTimestamp = function(user, timestamp) {
+  console.log(timestamp)
+  return Favourite.update({
+      user
+    }, {
+      $pull: {
+        timestamps: timestamp
+      }
+    }, {
+      upsert: true
+    });
+  };
+
+  
+
+favouriteSchema.statics.getTimestamps = async function(user) {
+  return this.findOne({
+    user
+}).select('timestamps');
+};
+
+favouriteSchema.statics.addTimestamp = function(user, timestamp) {
+  console.log(timestamp)
+  return Favourite.update({
+      user
+    }, {
+      $push: {
+        timestamps: timestamp
+      }
+    }, {
+      upsert: true
+    });
+};
+favouriteSchema.statics.addSubscription = function(user, subscription) {
+  console.log(1)
+  return Favourite.updateOne({
+      user
+    }, {
+      $set: {
+        subscription
+      }
+    }, {
+      upsert: true
+    });
+  };
+
+
   const Favourite = mongoose.model('favourites', favouriteSchema);
   
   module.exports = Favourite;

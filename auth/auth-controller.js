@@ -34,6 +34,10 @@ const createSendToken = (user, statusCode, req, res) => {
 };
 
 exports.signup = async (req, res, next) => {
+  const user = await User.findOne({ email: req.body.email })
+  if (user !== null) {
+    return res.status(401).send('This username is already taken.');
+  }
   const newUser = await User.create({
     email: req.body.email,
     password: req.body.password,
@@ -55,18 +59,18 @@ exports.login = async (req, res, next) => {
 
   // 1) Check if email and password exist
   if (!email || !password) {
-    return res.status(401).send({success: false, message: 'Invalid user or password'});
+    return res.status(401).send('Empty username or password');
     //return next(new AppError('Please provide email and password!', 400));
   }
   // 2) Check if user exists && password is correct
   const user = await User.findOne({ email }).select('+password');
-  console.log(password, user.password)
   if (!user || !(await user.correctPassword(password, user.password))) {
-    return res.status(401).send({success: false, message: 'Invalid user or password'});
+    return res.status(401).send('Invalid username or password');
     //return next(new AppError('Incorrect email or password', 401));
   }
 
   // 3) If everything ok, send token to client
+  console.log(123)
   createSendToken(user, 200, req, res);
 };
 
@@ -90,7 +94,7 @@ exports.protect = async (req, res, next) => {
     token = req.cookies.jwt;
   }
   if (!token) {
-    return res.status(401).send();
+    return res.status(401).send('Token expired.');
     /*return next(
       new AppError('You are not logged in! Please log in to get access.', 401)
     );*/
@@ -98,7 +102,7 @@ exports.protect = async (req, res, next) => {
 
   console.log(Date.now(), jwt.decode(token).exp)
   if (Date.now() >= jwt.decode(token).exp * 1000) {
-    return res.status(401).send();
+    return res.status(401).send('Token expired.');
   }
 
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);

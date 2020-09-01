@@ -17,6 +17,32 @@ const competitionSchema = new mongoose.Schema(
   }
 );
 
+competitionSchema.statics.getMatchesToNotify = async function(competitionId, user) {
+    const matches = (await Favourite.findOne({user}).select('matches -_id')) || [];
+    return this.aggregate([{
+        $project: {
+            _id: 0,
+            matches: 1
+        }
+    },{
+        $unwind: '$matches'
+    }, {
+        $addFields: {
+            "matches.dateComp": {"$cmp":["$matches.utcDate", new Date().toISOString()]}
+        }
+    },{
+            $match: { "matches.dateComp": 1 }
+        }, {
+            $group: {
+                _id: 0,
+            matches: {
+                $push: '$matches'
+            }
+            }
+        }
+    ])
+  };
+
 competitionSchema.statics.getMatches = async function(competitionId, user) {
     const matches = (await Favourite.findOne({user}).select('matches -_id')) || [];
     return this.aggregate([{
@@ -63,7 +89,7 @@ competitionSchema.statics.getMatches = async function(competitionId, user) {
         }
     }, {
         $sort: {
-            _id: -1
+            _id: 1
         }
     }])
   };
