@@ -31,4 +31,4 @@ server.setErrorConfig(app => {
 });
 
 const ap2p = server.build();
-ap2p.listen(3001);
+ap2p.listen(process.env.PORT || 3000);
