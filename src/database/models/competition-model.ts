@@ -36,7 +36,7 @@ competitionSchema.statics.getMatchesToNotify = async function (
         'matches.dateComp': {
           $cmp: [
             '$matches.utcDate',
-            new Date().toISOString()
+            new Date('2022-01-16T15:30:00Z').toISOString()
           ]
         }
       }
