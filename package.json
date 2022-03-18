@@ -48,7 +48,7 @@
     "redis": "^4.0.3",
     "reflect-metadata": "^0.1.13",
     "sync-request": "^6.1.0",
-    "validator": "^13.0.0",
+    "validator": "^13.7.0",
     "web-push": "^3.4.4",
     "xss-clean": "^0.1.1"
   },
