@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "rimraf dist/*",
     "lint": "tslint -c tslint.json -p tsconfig.json --fix",
-    "prettier": "heroku login",
+    "prettier": "prettier -w \"src/**/*.ts\"",
     "tsc": "tsc",
     "build": "npm-run-all clean lint prettier tsc",
     "dev:start": "npm-run-all build start",
