@@ -11,78 +11,73 @@ class NotificationService {
     let startedMatches: any = [];
     let matches: any = [];
     const fetchMatches = async () => {
-      matches = (await (Competition as any).getMatchesToNotify())[0].matches;
+     const  buff1 = (await (Competition as any).getMatchesToNotify(2021))[0]
+      matches = buff1 ? buff1.matches.slice(0, 10) : [];
+      const  buff2 = (await (Competition as any).getMatchesToNotify(2001))[0]
+      matches = matches.concat(buff2 ? buff2.matches.slice(0, 10) : []);
+      const  buff3 = (await (Competition as any).getMatchesToNotify(2014))[0]
+      matches = matches.concat(buff3 ? buff3.matches.slice(0, 10) : []);
+      const  buff4 = (await (Competition as any).getMatchesToNotify(2002))[0]
+      console.log(matches[0])
+      matches = matches.concat([...buff4.matches.slice(0, 10)]);
+      console.log(matches[0])
+      const  buff5 = (await (Competition as any).getMatchesToNotify(2019))[0]
+      matches = matches.concat(buff5 ? buff5.matches.slice(0, 10) : []);
+      //console.log(matches.filter((match: any) => ((new Date(match.utcDate) as any) < Date.now())).length)
     };
     fetchMatches();
     setInterval(fetchMatches, 10000000);
     const prepareNotifications = async () => {
       console.log('prepare');
       console.log(
-        matches.map((match: any) => {
-          return match.utcDate;
-        })
+        /*matches.filter((match: any) => {
+          return match.season.id === 733;
+        })*/
       );
-      const matchesToNotify: any = [];
+      let matchesToNotify: any = [];
       const matchesCopy = [...matches];
-      matchesCopy.find((match: any) => {
-        if ((new Date(match.utcDate) as any) < Date.now()) {
-          matchesToNotify.push(matches.shift());
-          return false;
-        }
-        return true;
-      });
+      matchesToNotify = matches.filter((match: any) => ((new Date(match.utcDate) as any) < Date.now()));
+      // console.log(matchesToNotify.map((match: any) => match.id))
       matchesToNotify.forEach(async (match: any) => {
         (await (Favourite as any).find({})).forEach((user: any) => {
-          if ((
-            user.teams.includes(match.homeTeam.id) ||
+          if (
+            (user.teams.includes(match.homeTeam.id) ||
             user.teams.includes(match.awayTeam.id) ||
-            user.matches.includes(match.id))
+            user.matches.includes(match.id)) && user.subscription
           ) {
             if (matches.status !== 'POSTPONED') {
-              console.log(match.id)
               startedMatches.push(match);
-              pushNotifications(
-                user.subscription,
-                match
-              );
+              pushNotifications(user.subscription, match);
             }
           }
         });
-      });
-      console.log(startedMatches)
-      startedMatches = startedMatches.filter((match: any) => {
-        if (match.status === 'FINISHED') {
-          finishedToNotify.push(match);
-          return false;
-        }
-        return true;
-      });
-      finishedToNotify.filter(async (match: any) => {
-        (await (Favourite as any).find({})).forEach((user: any) => {
-          if ((
-            user.teams.includes(match.homeTeam.id) ||
-            user.teams.includes(match.awayTeam.id) ||
-            user.matches.includes(match.id))
-          ) {
-              pushFinishedNotifications(
-                user.subscription,
-                match
-              );
-              return false;
+        startedMatches = startedMatches.filter((match: any) => {
+          if (match.status === 'FINISHED') {
+            finishedToNotify.push(match);
+            return false;
           }
-          return true
+          return true;
+        });
+        finishedToNotify.filter(async (match: any) => {
+          (await (Favourite as any).find({})).forEach((user: any) => {
+            if (
+              (user.teams.includes(match.homeTeam.id) ||
+              user.teams.includes(match.awayTeam.id) ||
+              user.matches.includes(match.id)) && user.subscription
+            ) {
+              pushFinishedNotifications(user.subscription, match);
+              return false;
+            }
+            return true;
+          });
         });
       });
     };
     const timeToNotify = 10000000000;
     prepareNotifications();
-    setInterval(prepareNotifications, 100000);
+    setInterval(prepareNotifications, 200000);
 
-    const pushFinishedNotifications = (
-      subscription: any,
-      match: any
-    ) => {
-      console.log('pushed finished')
+    const pushFinishedNotifications = (subscription: any, match: any) => {
       const payload = JSON.stringify({
         notification: {
           title: `${match.homeTeam.name} ${match.score.fullTime.homeTeam} : ${match.score.fullTime.awayTeam} ${match.awayTeam.name}`,
@@ -97,16 +92,16 @@ class NotificationService {
       });
       webpush
         .sendNotification(subscription, payload)
-        .then(() => {console.log('sent')})
+        .then(() => {
+          // console.log('sent');
+        })
         .catch((error: any) => {
           console.error(error);
         });
     };
 
-    const pushNotifications = (
-      subscription: any,
-      match: any
-    ) => {
+    const pushNotifications = (subscription: any, match: any) => {
+      // console.log('push not')
       const payload = JSON.stringify({
         notification: {
           title: `${match.homeTeam.name} vs ${match.awayTeam.name}`,
@@ -121,7 +116,9 @@ class NotificationService {
       });
       webpush
         .sendNotification(subscription, payload)
-        .then(() => {console.log('sent')})
+        .then(() => {
+          /*console.log('sent');*/
+        })
         .catch((error: any) => {
           console.error(error);
         });

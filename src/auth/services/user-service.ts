@@ -62,7 +62,8 @@ class UserService {
         teams: [],
         matches: [],
         leagues: []
-      });}
+      });
+    }
     return user;
   }
 

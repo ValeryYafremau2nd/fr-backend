@@ -20,6 +20,9 @@ competitionSchema.statics.getMatchesToNotify = async function (
     (await Favourite.findOne({ user }).select('matches -_id')) || [];
   return this.aggregate([
     {
+      $match: { 'id': competitionId }
+    },
+    {
       $project: {
         _id: 0,
         matches: 1
@@ -31,13 +34,24 @@ competitionSchema.statics.getMatchesToNotify = async function (
     {
       $addFields: {
         'matches.dateComp': {
-          $cmp: ['$matches.utcDate', new Date().toISOString()]
+          $cmp: [
+            '$matches.utcDate',
+            new Date().toISOString()
+          ]
         }
       }
     },
     {
       $match: { 'matches.dateComp': 1 }
     },
+    /*{
+      $or: [ {$match: { 'matches.season.id': 733 }},
+      {$match: { 'matches.season.id': 380 }},
+      {$match: { 'matches.season.id': 742 }},
+      {$match: { 'matches.season.id': 734 }},
+      {$match: { 'matches.season.id': 757 }},
+    ]
+    },*/
     {
       $group: {
         _id: 0,
