@@ -97,7 +97,7 @@ class NotificationService {
       });
       webpush
         .sendNotification(subscription, payload)
-        .then(() => {})
+        .then(() => {console.log('sent')})
         .catch((error: any) => {
           console.error(error);
         });
@@ -121,7 +121,7 @@ class NotificationService {
       });
       webpush
         .sendNotification(subscription, payload)
-        .then(() => {})
+        .then(() => {console.log('sent')})
         .catch((error: any) => {
           console.error(error);
         });

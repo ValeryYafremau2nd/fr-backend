@@ -56,18 +56,17 @@ class UserService {
     );
     const user = await User.findOne({ email: name });
     const fav = await Favorite.findOne({ user: user._id });
-    fav ||
+    if (!fav) {
       Favorite.create({
         user: user._id,
         teams: [],
         matches: [],
         leagues: []
-      });
+      });}
     return user;
   }
 
   public async verifyGoogleToken(token: string) {
-    this.googleClient.revokeToken;
     const ticket = await this.googleClient.verifyIdToken({
       idToken: token,
       audience:
