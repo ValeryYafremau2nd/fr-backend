@@ -11,39 +11,43 @@ class NotificationService {
     let startedMatches: any = [];
     let matches: any = [];
     const fetchMatches = async () => {
-     const  buff1 = (await (Competition as any).getMatchesToNotify(2021))[0]
+      const buff1 = (await (Competition as any).getMatchesToNotify(2021))[0];
       matches = buff1 ? buff1.matches.slice(0, 10) : [];
-      const  buff2 = (await (Competition as any).getMatchesToNotify(2001))[0]
+      const buff2 = (await (Competition as any).getMatchesToNotify(2001))[0];
       matches = matches.concat(buff2 ? buff2.matches.slice(0, 10) : []);
-      const  buff3 = (await (Competition as any).getMatchesToNotify(2014))[0]
+      const buff3 = (await (Competition as any).getMatchesToNotify(2014))[0];
       matches = matches.concat(buff3 ? buff3.matches.slice(0, 10) : []);
-      const  buff4 = (await (Competition as any).getMatchesToNotify(2002))[0]
-      console.log(matches[0])
+      const buff4 = (await (Competition as any).getMatchesToNotify(2002))[0];
+      console.log(matches[0]);
       matches = matches.concat([...buff4.matches.slice(0, 10)]);
-      console.log(matches[0])
-      const  buff5 = (await (Competition as any).getMatchesToNotify(2019))[0]
+      console.log(matches[0]);
+      const buff5 = (await (Competition as any).getMatchesToNotify(2019))[0];
       matches = matches.concat(buff5 ? buff5.matches.slice(0, 10) : []);
-      //console.log(matches.filter((match: any) => ((new Date(match.utcDate) as any) < Date.now())).length)
+      // console.log(matches.filter((match: any) => ((new Date(match.utcDate) as any) < Date.now())).length)
     };
     fetchMatches();
     setInterval(fetchMatches, 10000000);
     const prepareNotifications = async () => {
       console.log('prepare');
-      console.log(
+      console
+        .log
         /*matches.filter((match: any) => {
           return match.season.id === 733;
         })*/
-      );
+        ();
       let matchesToNotify: any = [];
       const matchesCopy = [...matches];
-      matchesToNotify = matches.filter((match: any) => ((new Date(match.utcDate) as any) < Date.now()));
+      matchesToNotify = matches.filter(
+        (match: any) => (new Date(match.utcDate) as any) < Date.now()
+      );
       // console.log(matchesToNotify.map((match: any) => match.id))
       matchesToNotify.forEach(async (match: any) => {
         (await (Favourite as any).find({})).forEach((user: any) => {
           if (
             (user.teams.includes(match.homeTeam.id) ||
-            user.teams.includes(match.awayTeam.id) ||
-            user.matches.includes(match.id)) && user.subscription
+              user.teams.includes(match.awayTeam.id) ||
+              user.matches.includes(match.id)) &&
+            user.subscription
           ) {
             if (matches.status !== 'POSTPONED') {
               startedMatches.push(match);
@@ -51,21 +55,22 @@ class NotificationService {
             }
           }
         });
-        startedMatches = startedMatches.filter((match: any) => {
-          if (match.status === 'FINISHED') {
-            finishedToNotify.push(match);
+        startedMatches = startedMatches.filter((startedMatch: any) => {
+          if (startedMatch.status === 'FINISHED') {
+            finishedToNotify.push(startedMatch);
             return false;
           }
           return true;
         });
-        finishedToNotify.filter(async (match: any) => {
+        finishedToNotify.filter(async (finishedMatch: any) => {
           (await (Favourite as any).find({})).forEach((user: any) => {
             if (
-              (user.teams.includes(match.homeTeam.id) ||
-              user.teams.includes(match.awayTeam.id) ||
-              user.matches.includes(match.id)) && user.subscription
+              (user.teams.includes(finishedMatch.homeTeam.id) ||
+                user.teams.includes(finishedMatch.awayTeam.id) ||
+                user.matches.includes(finishedMatch.id)) &&
+              user.subscription
             ) {
-              pushFinishedNotifications(user.subscription, match);
+              pushFinishedNotifications(user.subscription, finishedMatch);
               return false;
             }
             return true;
