@@ -26,7 +26,9 @@ const server = new InversifyExpressServer(mainContainer);
 server.setConfig(mainLoader);
 server.setErrorConfig(app => {
   app.use((err: BaseControllerError, req: Request, res: Response) => {
-    console.error(err.message);
+    console.log(err);
+    console.log(err.message);
+    console.log(err.stack);
     res.status(err.getCode()).send({ status: 'erorr', message: err.getMessage()});
   });
 });
