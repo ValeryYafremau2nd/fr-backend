@@ -7,7 +7,7 @@ import Team from '../database/models/team-model';
 class FavoritesService {
   async getMatches(user: string) {
     const favorite = await Favorite.getFavorite(user);
-    console.log(JSON.stringify(favorite))
+    console.log(JSON.stringify(favorite));
     return Competition.getAllTrackedMatches(favorite);
   }
   async getTeams(user: string) {

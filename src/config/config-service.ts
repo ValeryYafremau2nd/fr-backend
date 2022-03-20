@@ -9,6 +9,7 @@ class ConfigService {
   public readonly DB_URL: string;
   public readonly REDIS_CACHE_URL: string;
   public readonly CACHE_TTL: string;
+  public readonly GOOGLE_CLIENT_ID: string;
 
   constructor() {
     dotenv.config();
@@ -18,6 +19,7 @@ class ConfigService {
     this.DB_URL = process.env.DB_URL;
     this.REDIS_CACHE_URL = process.env.REDIS_CACHE_URL;
     this.CACHE_TTL = process.env.CACHE_TTL;
+    this.GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
   }
 }
 

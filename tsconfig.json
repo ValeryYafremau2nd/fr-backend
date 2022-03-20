@@ -16,7 +16,8 @@
         "lib": ["es6"],
         "types": ["reflect-metadata"],
         "experimentalDecorators": true,
-        "emitDecoratorMetadata": true
+        "emitDecoratorMetadata": true,
+        "typeRoots": ["./types"]
     },
     "include": [
         "src/**/*"

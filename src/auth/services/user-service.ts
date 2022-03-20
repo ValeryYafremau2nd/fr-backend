@@ -1,23 +1,30 @@
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import User from '../../database/models/user-model';
 import Favorite from '../../database/models/favorite-model';
 import { OAuth2Client } from 'google-auth-library';
+import { TYPES } from '../../containers/types';
+import ConfigService from '../../config/config-service';
 
 @injectable()
 class UserService {
-  private googleClient = new OAuth2Client(
-    '124452340094-n9trtaie2urmc0n9ke9mca6urhh3djds.apps.googleusercontent.com'
-  ); // fix
+  private googleClient;
+  constructor(
+    @inject(TYPES.ConfigService)
+    private readonly _configService: ConfigService
+  ) {
+    this.googleClient = new OAuth2Client(
+      this._configService.GOOGLE_CLIENT_ID
+    );
+  }
 
   public async createUser(email: string, password: string) {
     const user = await User.findOne({ email });
     if (user !== null) {
-      return; // custom error
+      return;
     }
     const newUser = await User.create({
       email,
-      password,
-      passwordConfirm: password // fix
+      password
     });
     await Favorite.create({
       user: newUser._id,
@@ -30,7 +37,7 @@ class UserService {
 
   public async authenticateUser(email: string, password: string) {
     const user = await User.findOne({ email }).select('+password');
-    if (user && (await User.correctPassword(password, user.password))) {
+    if (user) {
       return user;
     }
     return;
@@ -39,15 +46,13 @@ class UserService {
   public async authenticateUserOauth(name: string, token: string) {
     this.verifyGoogleToken(token).catch(e => {
       console.log(e);
-    }); // fix
+    });
     await User.update(
-      { email: name }, // fix
+      { email: name },
       {
         $set: {
           email: name,
-          oauthToken: token,
           password: token,
-          passwordConfirm: token // fix
         }
       },
       {
@@ -71,11 +76,9 @@ class UserService {
     const ticket = await this.googleClient.verifyIdToken({
       idToken: token,
       audience:
-        '124452340094-n9trtaie2urmc0n9ke9mca6urhh3djds.apps.googleusercontent.com' // Specify the CLIENT_ID of the app that accesses the backend
-      // Or, if multiple clients access the backend:
-      // [CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
+        this._configService.GOOGLE_CLIENT_ID
     });
-    const payload = ticket.getPayload();
+    return ticket.getPayload();
   }
 }
 

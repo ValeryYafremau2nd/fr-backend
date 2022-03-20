@@ -1,11 +1,13 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction, Request } from 'express';
 import { promisify } from 'util';
 import * as jwt from 'jsonwebtoken';
 import User from '../../database/models/user-model';
 import { BaseMiddleware } from 'inversify-express-utils';
 import { injectable, inject } from 'inversify';
 import ConfigService from '../../config/config-service';
-import { TYPES } from '../../types/types';
+import { TYPES } from '../../containers/types';
+import { UserRequest } from '../../base/interfaces/request-interface';
+import BaseControllerError from '../../base/errors/base-controller-error';
 
 @injectable()
 class ProtectMiddleware extends BaseMiddleware {
@@ -14,12 +16,7 @@ class ProtectMiddleware extends BaseMiddleware {
   ) {
     super();
   }
-  public async handler(
-    // fix test async
-    req: any, // fix
-    res: Response,
-    next: NextFunction
-  ) {
+  public async handler(req: UserRequest, res: Response, next: NextFunction) {
     let token;
     if (
       req.headers.authorization &&
@@ -30,18 +27,21 @@ class ProtectMiddleware extends BaseMiddleware {
       token = req.cookies.jwt;
     }
     if (!token) {
-      return res.status(401).send('Token expired.');
-      /*return next(
-          new AppError('You are not logged in! Please log in to get access.', 401)
-        );*/
+      return next(
+          new BaseControllerError('You are not logged in! Please log in to get access.', 401)
+        );
     }
 
-    if(!jwt.decode(token)) {
-      return res.status(401).send('Token empty.'); // fix
+    if (!jwt.decode(token)) {
+      return next(
+          new BaseControllerError('Token is empty.', 401)
+        );
     }
 
     if (Date.now() >= (jwt.decode(token) as any).exp * 1000) {
-      return res.status(401).send('Token expired.'); // fix
+      return next(
+          new BaseControllerError('Token expired.', 401)
+        );
     }
 
     const decoded = await (promisify(jwt.verify) as any)(
@@ -50,10 +50,12 @@ class ProtectMiddleware extends BaseMiddleware {
     );
     const currentUser = await User.findById(decoded.id);
     if (!currentUser) {
-      return res.status(401).send();
+      return next(
+          new BaseControllerError('User not found.', 401)
+        );
     }
 
-    req.user = currentUser; // fix custom request class
+    req.user = currentUser;
     next();
   }
 }

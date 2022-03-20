@@ -4,7 +4,6 @@ import ICompetitionModel from '../interfaces/competition/competition-model-inter
 import IPosition from '../interfaces/competition/position-interface';
 import IStanding from '../interfaces/competition/standing-interface';
 import IFavorite from '../interfaces/favorite/favorite-interface';
-import Favorite from './favorite-model';
 
 const competitionSchema = new Schema<ICompetition, ICompetitionModel>();
 
@@ -149,7 +148,6 @@ competitionSchema.statics.getAllTrackedMatches = async function (
     },
     {
       $match: {
-        // replace with filter
         $or: [
           {
             'matches.tracked': true
@@ -188,11 +186,6 @@ competitionSchema.statics.getAllTrackedMatches = async function (
         matches: {
           $push: '$matches'
         }
-      }
-    },
-    {
-      $addFields: {
-        competitionId: 2001
       }
     },
     {

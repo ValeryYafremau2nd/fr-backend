@@ -9,14 +9,17 @@ const webpush = require('web-push');
 @injectable()
 class NotificationService {
   private startedMatches = new Set();
+  private interval = 100000;
   constructor() {
+    console.log('notif service')
     this.prepareNotifications();
-    setInterval(this.prepareNotifications.bind(this), 100000);
+    setInterval(this.prepareNotifications.bind(this), this.interval);
   }
   private async prepareNotifications() {
     const matchesToNotify = (await Competition.getMatchesToNotify())[0];
     const favorites = await Favorite.find({});
     console.log(this.startedMatches);
+
     if (matchesToNotify)
       matchesToNotify.matches.forEach((match: IMatch) => {
         favorites.forEach((user: IFavorite) => {
@@ -28,14 +31,15 @@ class NotificationService {
             !this.startedMatches.has(match.id)
           ) {
             console.log(`started ${match.id}`);
-            this.startedMatches.add(match.id);
             this.pushStartNotification(user.subscription, match);
           }
+          this.startedMatches.add(match.id);
         });
       });
     const statusedMatches = await Competition.getMatchesById(
       Array.from(this.startedMatches) as number[]
     );
+
     if (statusedMatches[0])
       statusedMatches[0].matches.forEach((finishedMatch: IMatch) => {
         console.log(`finished ${finishedMatch.id}`);
@@ -68,16 +72,11 @@ class NotificationService {
     this.sendNotification(subscription, payload);
   }
 
-  private async fetchMatches() {
-    return (await Competition.getMatchesToNotify())[0];
-  }
-
   private pushStartNotification(subscription: ISubscription, match: IMatch) {
     const payload = JSON.stringify({
       notification: {
         title: `${match.homeTeam.name} vs ${match.awayTeam.name}`,
         body: `The match has just started.`,
-        icon: 'assets/main-page-logo-small-hat.png',
         vibrate: [100, 50, 100],
         data: {
           dateOfArrival: Date.now(),

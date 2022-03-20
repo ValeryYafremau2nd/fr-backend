@@ -20,73 +20,7 @@ const favoriteSchema = new mongoose.Schema<IFavorite, IFavoriteModel>({
 favoriteSchema.statics.getFavorite = async function (user: string) {
   return await this.findOne({ user }).select('matches teams subscription -_id');
 };
-/*
-favoriteSchema.statics.getMatches = async function (user: string) {
-  const favorite = this.findOne({ user }).select('matches teams -_id');
-  return Competition.aggregate([
-    {
-      $project: {
-        _id: 0,
-        matches: 1
-      }
-    },
-    {
-      $unwind: '$matches'
-    },
-    {
-      $addFields: {
-        'matches.tracked': {
-          $in: ['$matches.id', favorite.matches]
-        },
-        'matches.homeTeam.tracked': {
-          $in: ['$matches.homeTeam.id', favorite.teams]
-        },
-        'matches.awayTeam.tracked': {
-          $in: ['$matches.awayTeam.id', favorite.teams]
-        }
-      }
-    },
-    {
-      $match: {
-        // replace with filter
-        $or: [
-          {
-            'matches.tracked': true
-          },
-          {
-            'matches.homeTeam.tracked': true
-          },
-          {
-            'matches.awayTeam.tracked': true
-          }
-        ]
-      }
-    },
-    {
-      $addFields: {
-        'matches.matchDay': {
-          $dateToString: {
-            format: '%Y-%m-%d',
-            date: {
-              $dateFromString: {
-                dateString: '$matches.utcDate'
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      $group: {
-        _id: '$matches.matchDay',
-        matches: {
-          $push: '$matches'
-        }
-      }
-    }
-  ]);
-};
-*/
+
 favoriteSchema.statics.getLeagues = function (user: string) {
   return this.findOne({
     user
@@ -101,7 +35,6 @@ favoriteSchema.statics.getTeams = function (user: string) {
 
 favoriteSchema.statics.deleteMatch = (user: string, match: number) => {
   return Favorite.update(
-    // fix in all file
     {
       user
     },

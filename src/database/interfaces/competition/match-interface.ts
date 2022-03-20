@@ -1,7 +1,7 @@
 interface IMatch {
   id: number;
   utcDate: string;
-  status: string; // fix enum
+  status: string;
   matchDay: string;
   tracked: boolean;
   homeTeam: {

@@ -1,8 +1,7 @@
 import { Container } from 'inversify';
-import { TYPES } from '../types/types';
+import { TYPES } from './types';
 import ProtectMiddleware from '../auth/middlewares/protect-middleware';
 import UserService from '../auth/services/user-service';
-import AuthController from '../auth/controllers/auth-controller';
 import CompetitionService from '../services/competition-service';
 import FavoritesService from '../services/favorites-service';
 import DBConnection from '../database/db-connection';

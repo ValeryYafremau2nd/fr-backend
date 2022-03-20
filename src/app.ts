@@ -8,11 +8,11 @@ import mainContainer from './containers';
 import mainLoader from './loaders';
 import DBConnection from './database/db-connection';
 import ConfigService from './config/config-service';
-import { TYPES } from './types/types';
+import { TYPES } from './containers/types';
 import NotificationController from './controllers/notification-controller';
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
+import BaseControllerError from './base/errors/base-controller-error';
 
-// init in container?
 const initialization =
   DBConnection &&
   FavoriteController &&
@@ -25,9 +25,9 @@ const dbcon = mainContainer.get(TYPES.DBConnection);
 const server = new InversifyExpressServer(mainContainer);
 server.setConfig(mainLoader);
 server.setErrorConfig(app => {
-  app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  app.use((err: BaseControllerError, req: Request, res: Response) => {
     console.error(err.stack);
-    res.status(500).send('!');
+    res.status(err.getCode()).send({ status: 'erorr', message: err.getMessage()});
   });
 });
 

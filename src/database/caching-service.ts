@@ -1,9 +1,8 @@
 import * as mongoose from 'mongoose';
 import { inject, injectable } from 'inversify';
-import { TYPES } from '../types/types';
+import { TYPES } from '../containers/types';
 import ConfigService from '../config/config-service';
 import * as redis from 'redis';
-import * as util from 'util';
 
 @injectable()
 class CachingService {
@@ -13,7 +12,6 @@ class CachingService {
     const client = redis.createClient({ url: _configService.REDIS_CACHE_URL });
     client.connect();
     const exec = mongoose.Query.prototype.exec;
-    console.log('caching is on');
 
     mongoose.Query.prototype.exec = async function () {
       if (this.mongooseCollection.name !== 'teams')
