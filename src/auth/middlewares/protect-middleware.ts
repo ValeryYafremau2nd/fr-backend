@@ -36,6 +36,10 @@ class ProtectMiddleware extends BaseMiddleware {
         );*/
     }
 
+    if(!jwt.decode(token)) {
+      return res.status(401).send('Token empty.'); // fix
+    }
+
     if (Date.now() >= (jwt.decode(token) as any).exp * 1000) {
       return res.status(401).send('Token expired.'); // fix
     }

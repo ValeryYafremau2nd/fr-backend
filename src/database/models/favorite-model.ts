@@ -18,7 +18,7 @@ const favoriteSchema = new mongoose.Schema<IFavorite, IFavoriteModel>({
 });
 
 favoriteSchema.statics.getFavorite = async function (user: string) {
-  return await this.findOne({ user }).select('matches teams -_id');
+  return await this.findOne({ user }).select('matches teams subscription -_id');
 };
 /*
 favoriteSchema.statics.getMatches = async function (user: string) {

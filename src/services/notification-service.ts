@@ -11,7 +11,7 @@ class NotificationService {
   private startedMatches = new Set();
   constructor() {
     this.prepareNotifications();
-    setInterval(this.prepareNotifications.bind(this), 100000);
+    setInterval(this.prepareNotifications.bind(this), 10000);
   }
   private async prepareNotifications() {
     const matchesToNotify = (await Competition.getMatchesToNotify())[0];
@@ -28,9 +28,9 @@ class NotificationService {
             !this.startedMatches.has(match.id)
           ) {
             console.log(`started ${match.id}`);
+            this.startedMatches.add(match.id);
             this.pushStartNotification(user.subscription, match);
           }
-          this.startedMatches.add(match.id);
         });
       });
     const statusedMatches = await Competition.getMatchesById(

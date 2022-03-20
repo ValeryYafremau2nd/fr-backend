@@ -16,7 +16,6 @@ import Favorite from '../database/models/favorite-model';
 import Competition from '../database/models/competition-model';
 import NotificationService from '../services/notification-service';
 
-const users = [];
 @controller('/subscribe')
 class NotificationController extends BaseHttpController {
   constructor(
@@ -36,13 +35,6 @@ class NotificationController extends BaseHttpController {
     const subscription = req.body;
     await Favorite.addSubscription(req.user.id, subscription);
     res.status(201).json({});
-    const payload = JSON.stringify({
-      notification: {
-        title: 'Match tracker',
-        body: 'Match notifications are on.'
-      }
-    });
-    users.push({ user: req.user.id, subscription });
   }
 }
 export default NotificationController;
