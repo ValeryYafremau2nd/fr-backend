@@ -10,7 +10,7 @@ const morgan = require('morgan');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const rateLimit = require('express-rate-limit');
-
+/*
 const client = require('prom-client');
 const register = new client.Registry();
 
@@ -27,7 +27,7 @@ const httpRequestTimer = new client.Histogram({
   buckets: [0.1, 0.3, 0.5, 0.7, 1, 3, 5, 7, 10]
 });
 register.registerMetric(httpRequestTimer);
-
+*/
 async function mainLoader(app: express.Application) {
   app.enable('trust proxy');
   if (process.env.NODE_ENV === 'development') {
@@ -58,7 +58,7 @@ async function mainLoader(app: express.Application) {
   app.options('*', cors());
 
   app.use('/metrics', async (req: express.Request, res: express.Response) =>
-    res.end(await register.metrics())
+    res.end(/*await register.metrics()*/)
   );
 }
 
