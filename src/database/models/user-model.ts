@@ -2,19 +2,17 @@
 import * as mongoose from 'mongoose';
 import validator from 'validator';
 import * as bcrypt from 'bcryptjs';
+import IUser from '../interfaces/user/user-interface';
+import IUserModel from '../interfaces/user/user-model-interface';
+import { HookNextFunction } from 'mongoose';
 
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema<IUser, IUserModel>({
   email: {
     type: String,
     required: [true, 'Please provide your email'],
     unique: true,
     lowercase: true,
     validate: [validator.isEmail, 'Please provide a valid email']
-  },
-  role: {
-    type: String,
-    enum: ['user', 'admin'],
-    default: 'user'
   },
   password: {
     type: String,
@@ -26,15 +24,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please confirm your password'],
     validate: {
-      validator(el: any) {
+      validator(el: string) {
         return el === this.password;
       },
       message: 'Passwords are not the same!'
     }
   },
-  passwordChangedAt: Date,
-  passwordResetToken: String,
-  passwordResetExpires: Date,
   active: {
     type: Boolean,
     default: true,
@@ -42,22 +37,22 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-userSchema.pre('save', async function (next: any) {
-  (this as any).password = await bcrypt.hash((this as any).password, 12);
+userSchema.pre('save', async function (next: HookNextFunction) {
+  this.password = await bcrypt.hash(this.password, 12);
   next();
 });
 
-userSchema.pre(/^find/, (next: any) => {
+userSchema.pre(/^find/, (next: HookNextFunction) => {
   User.find({ active: { $ne: false } });
   next();
 });
 
-userSchema.methods.correctPassword = async (
-  candidatePassword: any,
-  userPassword: any
+userSchema.statics.correctPassword = async (
+  candidatePassword: string,
+  userPassword: string
 ) => {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model<IUser, IUserModel>('User', userSchema);
 
 export default User;

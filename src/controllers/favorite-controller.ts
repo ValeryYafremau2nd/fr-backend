@@ -11,6 +11,7 @@ import {
 } from 'inversify-express-utils';
 import FavoritesService from '../services/favorites-service';
 import { inject } from 'inversify';
+import { Response } from 'express';
 
 @controller('/favourite')
 class FavoriteController extends BaseHttpController {
@@ -21,7 +22,7 @@ class FavoriteController extends BaseHttpController {
     super();
   }
   @httpGet('/matches', TYPES.ProtectMiddleware)
-  public async getMatches(@request() req: any, @response() res: any) {
+  public async getMatches(@request() req: any, @response() res: Response) {
     const matches1 = await this._favoriteService.getMatches(req.user.id);
     res.json({
       status: 'success',
@@ -30,7 +31,7 @@ class FavoriteController extends BaseHttpController {
     });
   }
   @httpGet('/teams', TYPES.ProtectMiddleware)
-  public async getTeams(@request() req: any, @response() res: any) {
+  public async getTeams(@request() req: any, @response() res: Response) {
     const teams = await this._favoriteService.getTeams(req.user.id);
     res.json({
       status: 'success',
@@ -40,7 +41,7 @@ class FavoriteController extends BaseHttpController {
   }
 
   @httpPost('/match', TYPES.ProtectMiddleware)
-  public async postMatch(@request() req: any, @response() res: any) {
+  public async postMatch(@request() req: any, @response() res: Response) {
     const match = await this._favoriteService.addMatch(
       req.user.id,
       req.body.match
@@ -52,7 +53,7 @@ class FavoriteController extends BaseHttpController {
   }
 
   @httpPost('/team', TYPES.ProtectMiddleware)
-  public async postTeam(@request() req: any, @response() res: any) {
+  public async postTeam(@request() req: any, @response() res: Response) {
     const team = await this._favoriteService.addTeam(
       req.user.id,
       req.body.team
@@ -67,7 +68,7 @@ class FavoriteController extends BaseHttpController {
   public async deleteMatch(
     @requestParam('id') id: string,
     @request() req: any,
-    @response() res: any
+    @response() res: Response
   ) {
     const match = await this._favoriteService.deleteMatch(
       req.user.id,
@@ -83,7 +84,7 @@ class FavoriteController extends BaseHttpController {
   public async deleteTeam(
     @requestParam('id') id: string,
     @request() req: any,
-    @response() res: any
+    @response() res: Response
   ) {
     const team = await this._favoriteService.deleteTeam(
       req.user.id,

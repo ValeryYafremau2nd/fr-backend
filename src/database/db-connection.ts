@@ -16,7 +16,6 @@ class DBConnection {
       useNewUrlParser: true,
       useUnifiedTopology: true
     });
-    console.log('db is connecting');
   }
 
   public get connection() {

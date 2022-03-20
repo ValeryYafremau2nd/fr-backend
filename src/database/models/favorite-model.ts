@@ -1,24 +1,27 @@
 import * as mongoose from 'mongoose';
 import Team from './team-model';
 import Competition from './competition-model';
-const favouriteSchema = new mongoose.Schema({
+import ISubscription from '../interfaces/favorite/subscription-interface';
+import IFavoriteModel from '../interfaces/favorite/favorite-model-interface';
+import IFavorite from '../interfaces/favorite/favorite-interface';
+const favoriteSchema = new mongoose.Schema<IFavorite, IFavoriteModel>({
   user: {
     type: mongoose.Types.ObjectId,
     ref: 'users',
     unique: true
   },
-  teams: [],
-  leagues: [],
-  matches: [],
+  teams: [Number],
+  leagues: [Number],
+  matches: [Number],
   timestamps: [],
   subscription: ''
 });
 
-favouriteSchema.statics.getFavorite = async function (user: any) {
+favoriteSchema.statics.getFavorite = async function (user: string) {
   return await this.findOne({ user }).select('matches teams -_id');
 };
-
-favouriteSchema.statics.getMatches = async function (user: any) {
+/*
+favoriteSchema.statics.getMatches = async function (user: string) {
   const favorite = this.findOne({ user }).select('matches teams -_id');
   return Competition.aggregate([
     {
@@ -74,45 +77,31 @@ favouriteSchema.statics.getMatches = async function (user: any) {
       }
     },
     {
-      $sort: {
-        utcDate: 1
-      }
-    },
-    {
       $group: {
         _id: '$matches.matchDay',
         matches: {
           $push: '$matches'
         }
       }
-    },
-    {
-      $addFields: {
-        competitionId: 2001
-      }
-    },
-    {
-      $sort: {
-        _id: 1
-      }
     }
   ]);
 };
-
-favouriteSchema.statics.getLeagues = function (user: any) {
+*/
+favoriteSchema.statics.getLeagues = function (user: string) {
   return this.findOne({
     user
   }).select('leagues');
 };
 
-favouriteSchema.statics.getTeams = function (user: any) {
+favoriteSchema.statics.getTeams = function (user: string) {
   return this.findOne({
     user
   }).select('teams');
 };
 
-favouriteSchema.statics.deleteMatch = (user: any, match: any) => {
-  return Favourite.update(
+favoriteSchema.statics.deleteMatch = (user: string, match: number) => {
+  return Favorite.update(
+    // fix in all file
     {
       user
     },
@@ -126,8 +115,8 @@ favouriteSchema.statics.deleteMatch = (user: any, match: any) => {
     }
   );
 };
-favouriteSchema.statics.deleteLeague = (user: any, league: any) => {
-  return Favourite.update(
+favoriteSchema.statics.deleteLeague = (user: string, league: number) => {
+  return Favorite.update(
     {
       user
     },
@@ -141,8 +130,8 @@ favouriteSchema.statics.deleteLeague = (user: any, league: any) => {
     }
   );
 };
-favouriteSchema.statics.deleteTeam = (user: any, team: any) => {
-  return Favourite.update(
+favoriteSchema.statics.deleteTeam = (user: string, team: number) => {
+  return Favorite.update(
     {
       user
     },
@@ -156,8 +145,8 @@ favouriteSchema.statics.deleteTeam = (user: any, team: any) => {
     }
   );
 };
-favouriteSchema.statics.addMatch = (user: any, match: any) => {
-  return Favourite.update(
+favoriteSchema.statics.addMatch = (user: string, match: number) => {
+  return Favorite.update(
     {
       user
     },
@@ -172,8 +161,8 @@ favouriteSchema.statics.addMatch = (user: any, match: any) => {
   );
 };
 
-favouriteSchema.statics.addLeague = (user: any, league: any) => {
-  return Favourite.update(
+favoriteSchema.statics.addLeague = (user: string, league: number) => {
+  return Favorite.update(
     {
       user
     },
@@ -188,8 +177,8 @@ favouriteSchema.statics.addLeague = (user: any, league: any) => {
   );
 };
 
-favouriteSchema.statics.addTeam = (user: any, team: any) => {
-  return Favourite.update(
+favoriteSchema.statics.addTeam = (user: string, team: number) => {
+  return Favorite.update(
     {
       user
     },
@@ -203,8 +192,11 @@ favouriteSchema.statics.addTeam = (user: any, team: any) => {
     }
   );
 };
-favouriteSchema.statics.addSubscription = (user: any, subscription: any) => {
-  return Favourite.updateOne(
+favoriteSchema.statics.addSubscription = (
+  user: string,
+  subscription: ISubscription
+) => {
+  return Favorite.updateOne(
     {
       user
     },
@@ -219,6 +211,9 @@ favouriteSchema.statics.addSubscription = (user: any, subscription: any) => {
   );
 };
 
-const Favourite = mongoose.model('favourites', favouriteSchema);
+const Favorite = mongoose.model<IFavorite, IFavoriteModel>(
+  'Favorites',
+  favoriteSchema
+);
 
-export default Favourite;
+export default Favorite;

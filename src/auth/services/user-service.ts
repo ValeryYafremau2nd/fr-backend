@@ -30,7 +30,7 @@ class UserService {
 
   public async authenticateUser(email: string, password: string) {
     const user = await User.findOne({ email }).select('+password');
-    if (user && (await user.correctPassword(password, user.password))) {
+    if (user && (await User.correctPassword(password, user.password))) {
       return user;
     }
     return;

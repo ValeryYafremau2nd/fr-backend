@@ -12,7 +12,7 @@ import {
 } from 'inversify-express-utils';
 import { inject } from 'inversify';
 import { TYPES } from '../types/types';
-import Favourite from '../database/models/favorite-model';
+import Favorite from '../database/models/favorite-model';
 import Competition from '../database/models/competition-model';
 import NotificationService from '../services/notification-service';
 
@@ -34,7 +34,7 @@ class NotificationController extends BaseHttpController {
   @httpPost('/', TYPES.ProtectMiddleware) // fix middleware
   public async getLeagues(@request() req: any, @response() res: any) {
     const subscription = req.body;
-    await (Favourite as any).addSubscription(req.user.id, subscription);
+    await Favorite.addSubscription(req.user.id, subscription);
     res.status(201).json({});
     const payload = JSON.stringify({
       notification: {
@@ -43,14 +43,6 @@ class NotificationController extends BaseHttpController {
       }
     });
     users.push({ user: req.user.id, subscription });
-    /*setTimeout(function() {
-      webpush
-        .sendNotification(subscription, payload)
-        .then(() => (Favourite as any).addSubscription(req.user, subscription))
-        .catch((error: any) => {
-          console.error(error.stack);
-        });
-    }, 1000)*/
   }
 }
 export default NotificationController;

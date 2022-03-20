@@ -1,6 +1,9 @@
 import { injectable } from 'inversify';
-import Favourite from '../database/models/favorite-model';
+import Favorite from '../database/models/favorite-model';
 import Competition from '../database/models/competition-model';
+import IMatch from '../database/interfaces/competition/match-interface';
+import IFavorite from '../database/interfaces/favorite/favorite-interface';
+import ISubscription from '../database/interfaces/favorite/subscription-interface';
 const webpush = require('web-push');
 
 @injectable()
@@ -11,33 +14,33 @@ class NotificationService {
     setInterval(this.prepareNotifications.bind(this), 100000);
   }
   private async prepareNotifications() {
-    const matchesToNotify = (await (Competition as any).getMatchesToNotify())[0];
-    const favorites = await (Favourite as any).find({});
-    console.log(this.startedMatches)
-    if (matchesToNotify) matchesToNotify.matches.forEach((match: any) => {
-      favorites.forEach((user: any) => {
-        if (
-          (user.teams.includes(match.homeTeam.id) ||
-            user.teams.includes(match.awayTeam.id) ||
-            user.matches.includes(match.id)) &&
-          user.subscription &&
-          !this.startedMatches.has(match.id)
-        ) {
-          console.log(`started ${match.id}`);
+    const matchesToNotify = (await Competition.getMatchesToNotify())[0];
+    const favorites = await Favorite.find({});
+    console.log(this.startedMatches);
+    if (matchesToNotify)
+      matchesToNotify.matches.forEach((match: IMatch) => {
+        favorites.forEach((user: IFavorite) => {
+          if (
+            (user.teams.includes(match.homeTeam.id) ||
+              user.teams.includes(match.awayTeam.id) ||
+              user.matches.includes(match.id)) &&
+            user.subscription &&
+            !this.startedMatches.has(match.id)
+          ) {
+            console.log(`started ${match.id}`);
+            this.pushStartNotification(user.subscription, match);
+          }
           this.startedMatches.add(match.id);
-          this.pushStartNotification(user.subscription, match);
-        }
+        });
       });
-    });
-    const statusedMatches = await (Competition as any).getMatchesById(
-      1,
-      Array.from(this.startedMatches)
+    const statusedMatches = await Competition.getMatchesById(
+      Array.from(this.startedMatches) as number[]
     );
     if (statusedMatches[0])
-      statusedMatches[0].matches.forEach((finishedMatch: any) => {
+      statusedMatches[0].matches.forEach((finishedMatch: IMatch) => {
         console.log(`finished ${finishedMatch.id}`);
         this.startedMatches.delete(finishedMatch.id);
-        favorites.forEach((user: any) => {
+        favorites.forEach((user: IFavorite) => {
           if (
             (user.teams.includes(finishedMatch.homeTeam.id) ||
               user.teams.includes(finishedMatch.awayTeam.id) ||
@@ -49,7 +52,7 @@ class NotificationService {
         });
       });
   }
-  private pushEndNotification(subscription: any, match: any) {
+  private pushEndNotification(subscription: ISubscription, match: IMatch) {
     const payload = JSON.stringify({
       notification: {
         title: `${match.homeTeam.name} ${match.score.fullTime.homeTeam} : ${match.score.fullTime.awayTeam} ${match.awayTeam.name}`,
@@ -66,20 +69,10 @@ class NotificationService {
   }
 
   private async fetchMatches() {
-    let matches = [];
-    const buff1 = (await (Competition as any).getMatchesToNotify(2021))[0];
-    matches = buff1 ? buff1.matches.slice(0, 10) : [];
-    const buff2 = (await (Competition as any).getMatchesToNotify(2001))[0];
-    matches = matches.concat(buff2 ? buff2.matches.slice(0, 10) : []);
-    const buff3 = (await (Competition as any).getMatchesToNotify(2014))[0];
-    matches = matches.concat(buff3 ? buff3.matches.slice(0, 10) : []);
-    const buff4 = (await (Competition as any).getMatchesToNotify(2002))[0];
-    matches = matches.concat(buff4 ? buff4.matches.slice(0, 10) : []);
-    const buff5 = (await (Competition as any).getMatchesToNotify(2019))[0];
-    return matches.concat(buff5 ? buff5.matches.slice(0, 10) : []);
+    return (await Competition.getMatchesToNotify())[0];
   }
 
-  private pushStartNotification(subscription: any, match: any) {
+  private pushStartNotification(subscription: ISubscription, match: IMatch) {
     const payload = JSON.stringify({
       notification: {
         title: `${match.homeTeam.name} vs ${match.awayTeam.name}`,
@@ -95,13 +88,13 @@ class NotificationService {
     this.sendNotification(subscription, payload);
   }
 
-  private sendNotification(subscription: any, payload: any) {
+  private sendNotification(subscription: ISubscription, payload: any) {
     webpush
       .sendNotification(subscription, payload)
       .then(() => {
         /*console.log('sent');*/
       })
-      .catch((error: any) => {
+      .catch((error: Error) => {
         console.error(error);
       });
   }

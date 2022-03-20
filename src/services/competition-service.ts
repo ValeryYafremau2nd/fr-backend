@@ -1,21 +1,19 @@
 import { injectable } from 'inversify';
-import Favourite from '../database/models/favorite-model';
+import Favorite from '../database/models/favorite-model';
 import Competition from '../database/models/competition-model';
 
 @injectable()
 class CompetitionService {
-  async getMatches(competitionId: any, user: any) {
-    const matches =
-      (await Favourite.findOne({ user }).select('matches -_id')) || [];
-    return (Competition as any).getMatches(competitionId, matches);
+  async getMatches(competitionId: number, user: string) {
+    const matches = await Favorite.findOne({ user }).select('matches -_id');
+    return Competition.getMatches(competitionId, matches.matches);
   }
-  async getStandings(competitionId: any, user: any) {
-    const trackedTeams =
-      (await Favourite.findOne({ user }).select('teams -_id')) || [];
-    return (Competition as any).getStandings(competitionId, trackedTeams);
+  async getStandings(competitionId: number, user: string) {
+    const trackedTeams = await Favorite.findOne({ user }).select('teams -_id');
+    return Competition.getStandings(competitionId, trackedTeams.teams);
   }
   async getLeagues() {
-    return await (Competition as any).find({});
+    return await Competition.find({});
   }
 }
 

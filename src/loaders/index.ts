@@ -57,7 +57,7 @@ async function mainLoader(app: any) {
 
   app.options('*', cors());
 
-  app.use('/metrics', async (req: any, res: any) =>
+  app.use('/metrics', async (req: express.Request, res: express.Response) =>
     res.end(/*await register.metrics()*/)
   );
 }

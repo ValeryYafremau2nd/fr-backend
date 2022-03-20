@@ -11,6 +11,7 @@ import {
 } from 'inversify-express-utils';
 import { inject } from 'inversify';
 import ConfigService from '../../config/config-service';
+import { Response } from 'express';
 
 @controller('/api/v1/auth')
 class AuthController extends BaseHttpController {
@@ -22,7 +23,7 @@ class AuthController extends BaseHttpController {
   }
 
   @httpPost('/signup')
-  public async signup(@request() req: any, @response() res: any) {
+  public async signup(@request() req: any, @response() res: Response) {
     const newUser = await this._userService.createUser(
       req.body.email,
       req.body.password
@@ -35,7 +36,7 @@ class AuthController extends BaseHttpController {
   }
 
   @httpPost('/login')
-  public async login(@request() req: any, @response() res: any) {
+  public async login(@request() req: any, @response() res: Response) {
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -51,7 +52,7 @@ class AuthController extends BaseHttpController {
   }
 
   @httpPost('/login-oauth')
-  public async loginOauth(@request() req: any, @response() res: any) {
+  public async loginOauth(@request() req: any, @response() res: Response) {
     const { user: u, token } = req.body;
 
     if (!u || !token) {
@@ -67,7 +68,7 @@ class AuthController extends BaseHttpController {
   }
 
   @httpGet('/logout', TYPES.ProtectMiddleware)
-  public async logout(@request() req: any, @response() res: any) {
+  public async logout(@request() req: any, @response() res: Response) {
     res.cookie('jwt', 'loggedout', {
       expires: new Date(Date.now() + 10 * 1000),
       httpOnly: true
@@ -75,7 +76,7 @@ class AuthController extends BaseHttpController {
     res.status(200).json({ status: 'success' });
   }
 
-  private _sendToken(user: any, statusCode: any, req: any, res: any) {
+  private _sendToken(user: any, statusCode: any, req: any, res: Response) {
     const token = jwt.sign({ id: user._id }, this._configService.JWT_SECRET, {
       expiresIn: this._configService.JWT_EXPIRES_IN
     });
