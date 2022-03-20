@@ -12,7 +12,6 @@ import {
 import { inject } from 'inversify';
 import ConfigService from '../../config/config-service';
 import { Response } from 'express';
-import Favorite from '../../database/models/favorite-model';
 
 @controller('/api/v1/auth')
 class AuthController extends BaseHttpController {
@@ -32,9 +31,8 @@ class AuthController extends BaseHttpController {
     if (!newUser) {
       return res.status(401).send('This username is already taken.');
     }
-    const fav = (await Favorite.getFavorite(newUser._id))
 
-    return this._sendToken(Object.assign({}, {id: newUser.id}, { subscription: fav ? !!fav.subscription : false  }), 200, req, res);
+    return this._sendToken(newUser, 201, req, res);
   }
 
   @httpPost('/login')
@@ -46,12 +44,11 @@ class AuthController extends BaseHttpController {
       // return next(new AppError('Please provide email and password!', 400));
     }
     const user = await this._userService.authenticateUser(email, password);
-    const fav = (await Favorite.getFavorite(user._id))
     if (!user) {
       return res.status(401).send('Invalid username or password');
       // return next(new AppError('Incorrect email or password', 401));
     }
-    return this._sendToken(Object.assign({}, {id: user.id}, { subscription: fav ? !!fav.subscription : false  }), 200, req, res);
+    return this._sendToken(user, 200, req, res);
   }
 
   @httpPost('/login-oauth')
@@ -67,9 +64,7 @@ class AuthController extends BaseHttpController {
       return res.status(401).send('Invalid username or password');
       // return next(new AppError('Incorrect email or password', 401));
     }
-    const fav = (await Favorite.getFavorite(user._id))
-    console.log(JSON.stringify(fav))
-    return this._sendToken(Object.assign({}, {id: user.id}, { subscription: fav ? !!fav.subscription : false  }), 200, req, res);
+    return this._sendToken(user, 200, req, res);
   }
 
   @httpGet('/logout', TYPES.ProtectMiddleware)

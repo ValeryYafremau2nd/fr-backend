@@ -11,7 +11,7 @@ class NotificationService {
   private startedMatches = new Set();
   constructor() {
     this.prepareNotifications();
-    setInterval(this.prepareNotifications.bind(this), 10000);
+    setInterval(this.prepareNotifications.bind(this), 100000);
   }
   private async prepareNotifications() {
     const matchesToNotify = (await Competition.getMatchesToNotify())[0];
