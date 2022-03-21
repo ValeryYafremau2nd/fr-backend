@@ -4,7 +4,8 @@ import {
   httpGet,
   request,
   response,
-  requestParam
+  requestParam,
+  next
 } from 'inversify-express-utils';
 import { TYPES } from '../containers/types';
 import { inject } from 'inversify';
@@ -26,7 +27,8 @@ class LeagueController extends BaseHttpController {
   public async getMatches(
     @requestParam('id') id: string,
     @request() req: UserRequest,
-    @response() res: Response, next: NextFunction
+    @response() res: Response,
+    @next() next: NextFunction
   ) {
     let matches;
     try {
@@ -34,10 +36,8 @@ class LeagueController extends BaseHttpController {
         +req.params.id,
         req.user.id
       );
-    } catch(e) {
-      return next(
-          new BaseControllerError('Couldn\'t get matches.', 500)
-        );
+    } catch (e) {
+      return res.status(500).send("Couldn't get matches.");
     }
     return res.json({
       status: 'success',
@@ -50,7 +50,8 @@ class LeagueController extends BaseHttpController {
   public async getStandings(
     @requestParam('id') id: string,
     @request() req: UserRequest,
-    @response() res: Response, next: NextFunction
+    @response() res: Response,
+    @next() next: NextFunction
   ) {
     let standings;
     try {
@@ -58,10 +59,8 @@ class LeagueController extends BaseHttpController {
         +req.params.id,
         req.user.id
       );
-    } catch(e) {
-      return next(
-          new BaseControllerError('Couldn\'t get standings.', 500)
-        );
+    } catch (e) {
+      return res.status(500).send("Couldn't get standings.");
     }
     return res.json({
       status: 'success',
@@ -71,14 +70,16 @@ class LeagueController extends BaseHttpController {
   }
 
   @httpGet('/', TYPES.ProtectMiddleware)
-  public async getLeagues(@request() req: Request, @response() res: Response, next: NextFunction) {
+  public async getLeagues(
+    @request() req: Request,
+    @response() res: Response,
+    @next() next: NextFunction
+  ) {
     let leagues;
     try {
       leagues = await this._competitionService.getLeagues();
-    } catch(e) {
-      return next(
-          new BaseControllerError('Couldn\'t get leagues.', 500)
-        );
+    } catch (e) {
+      return res.status(500).send("Couldn't get leagues.");
     }
     return res.json(leagues);
   }

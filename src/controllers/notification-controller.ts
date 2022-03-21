@@ -8,7 +8,8 @@ import {
   request,
   response,
   requestParam,
-  httpPost
+  httpPost,
+  next
 } from 'inversify-express-utils';
 import { inject } from 'inversify';
 import { TYPES } from '../containers/types';
@@ -20,10 +21,8 @@ import BaseControllerError from '../base/errors/base-controller-error';
 
 @controller('/subscribe')
 class NotificationController extends BaseHttpController {
-  constructor(
-    /*@inject(TYPES.NotificationService)
-    private readonly _notificationService: NotificationService*/
-  ) {
+  constructor /*@inject(TYPES.NotificationService)
+    private readonly _notificationService: NotificationService*/() {
     super();
     webpush.setVapidDetails(
       'mailto:2@as.sd', // cork
@@ -33,14 +32,16 @@ class NotificationController extends BaseHttpController {
   }
 
   @httpPost('/', TYPES.ProtectMiddleware)
-  public async getLeagues(@request() req: UserRequest, @response() res: Response, next: NextFunction) {
+  public async getLeagues(
+    @request() req: UserRequest,
+    @response() res: Response,
+    @next() next: NextFunction
+  ) {
     const subscription = req.body;
     try {
       await Favorite.addSubscription(req.user.id, subscription);
-    } catch(e) {
-      return next(
-          new BaseControllerError('Couldn\'t subscribe to notifications.', 500)
-        );
+    } catch (e) {
+      return res.status(500).send("Couldn't subscribe to notifications.");
     }
     return res.status(201).json({});
   }

@@ -11,7 +11,7 @@ class NotificationService {
   private startedMatches = new Set();
   private interval = 100000;
   constructor() {
-    console.log('notif service')
+    console.log('notif service');
     this.prepareNotifications();
     setInterval(this.prepareNotifications.bind(this), this.interval);
   }

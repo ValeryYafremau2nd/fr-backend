@@ -2,7 +2,7 @@ import { Response, NextFunction, Request } from 'express';
 import { promisify } from 'util';
 import * as jwt from 'jsonwebtoken';
 import User from '../../database/models/user-model';
-import { BaseMiddleware } from 'inversify-express-utils';
+import { BaseMiddleware, next } from 'inversify-express-utils';
 import { injectable, inject } from 'inversify';
 import ConfigService from '../../config/config-service';
 import { TYPES } from '../../containers/types';
@@ -16,7 +16,11 @@ class ProtectMiddleware extends BaseMiddleware {
   ) {
     super();
   }
-  public async handler(req: UserRequest, res: Response, next: NextFunction) {
+  public async handler(
+    req: UserRequest,
+    res: Response,
+    @next() next: NextFunction
+  ) {
     let token;
     if (
       req.headers.authorization &&
@@ -27,21 +31,17 @@ class ProtectMiddleware extends BaseMiddleware {
       token = req.cookies.jwt;
     }
     if (!token) {
-      return next(
-          new BaseControllerError('You are not logged in! Please log in to get access.', 401)
-        );
+      return res
+        .status(401)
+        .send('You are not logged in! Please log in to get access.');
     }
 
     if (!jwt.decode(token)) {
-      return next(
-          new BaseControllerError('Token is empty.', 401)
-        );
+      return res.status(401).send('Token is empty.');
     }
 
     if (Date.now() >= (jwt.decode(token) as any).exp * 1000) {
-      return next(
-          new BaseControllerError('Token expired.', 401)
-        );
+      return res.status(401).send('Token expired.');
     }
 
     const decoded = await (promisify(jwt.verify) as any)(
@@ -50,9 +50,7 @@ class ProtectMiddleware extends BaseMiddleware {
     );
     const currentUser = await User.findById(decoded.id);
     if (!currentUser) {
-      return next(
-          new BaseControllerError('User not found.', 401)
-        );
+      return res.status(401).send('User not found.');
     }
 
     req.user = currentUser;

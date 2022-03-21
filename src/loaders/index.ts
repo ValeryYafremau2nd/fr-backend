@@ -4,6 +4,7 @@ import * as compression from 'compression';
 import * as cookieParser from 'cookie-parser';
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
+import * as Sentry from '@sentry/node';
 
 const helmet = require('helmet');
 const morgan = require('morgan');
@@ -29,6 +30,7 @@ const httpRequestTimer = new client.Histogram({
 register.registerMetric(httpRequestTimer);
 */
 async function mainLoader(app: express.Application) {
+  app.use(Sentry.Handlers.requestHandler());
   app.enable('trust proxy');
   if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));

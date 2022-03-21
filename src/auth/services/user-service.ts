@@ -12,9 +12,7 @@ class UserService {
     @inject(TYPES.ConfigService)
     private readonly _configService: ConfigService
   ) {
-    this.googleClient = new OAuth2Client(
-      this._configService.GOOGLE_CLIENT_ID
-    );
+    this.googleClient = new OAuth2Client(this._configService.GOOGLE_CLIENT_ID);
   }
 
   public async createUser(email: string, password: string) {
@@ -52,7 +50,7 @@ class UserService {
       {
         $set: {
           email: name,
-          password: token,
+          password: token
         }
       },
       {
@@ -75,8 +73,7 @@ class UserService {
   public async verifyGoogleToken(token: string) {
     const ticket = await this.googleClient.verifyIdToken({
       idToken: token,
-      audience:
-        this._configService.GOOGLE_CLIENT_ID
+      audience: this._configService.GOOGLE_CLIENT_ID
     });
     return ticket.getPayload();
   }

@@ -10,13 +10,11 @@ const userSchema = new mongoose.Schema<IUser, IUserModel>({
     type: String,
     required: [true, 'Please provide your email'],
     unique: true,
-    lowercase: true,
-    validate: [validator.isEmail, 'Please provide a valid email']
+    lowercase: true
   },
   password: {
     type: String,
     required: [true, 'Please provide a password'],
-    minlength: 6,
     select: false
   },
   active: {
@@ -28,6 +26,7 @@ const userSchema = new mongoose.Schema<IUser, IUserModel>({
 
 userSchema.pre('save', async function (next: HookNextFunction) {
   this.password = await bcrypt.hash(this.password, 12);
+  this.passwordConfirm = undefined;
   next();
 });
 
@@ -35,6 +34,13 @@ userSchema.pre(/^find/, (next: HookNextFunction) => {
   User.find({ active: { $ne: false } });
   next();
 });
+
+userSchema.statics.correctPassword = async (
+  candidatePassword: string,
+  userPassword: string
+) => {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
 const User = mongoose.model<IUser, IUserModel>('User', userSchema);
 
 export default User;

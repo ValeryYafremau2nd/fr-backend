@@ -7,13 +7,15 @@ import {
   httpGet,
   request,
   response,
-  httpPost
+  httpPost,
+  next
 } from 'inversify-express-utils';
 import { inject } from 'inversify';
 import ConfigService from '../../config/config-service';
 import { NextFunction, Request, Response } from 'express';
 import IUser from '../../database/interfaces/user/user-interface';
 import BaseControllerError from '../../base/errors/base-controller-error';
+import User from '../../database/models/user-model';
 
 @controller('/api/v1/auth')
 class AuthController extends BaseHttpController {
@@ -25,42 +27,54 @@ class AuthController extends BaseHttpController {
   }
 
   @httpPost('/signup')
-  public async signup(@request() req: Request, @response() res: Response, next: NextFunction) {
+  public async signup(
+    @request() req: Request,
+    @response() res: Response,
+    @next() next: NextFunction
+  ) {
     const newUser = await this._userService.createUser(
       req.body.email,
       req.body.password
     );
     if (!newUser) {
-      return next(new BaseControllerError('This name is already taken', 401));
+      return res.status(401).send('This name is already taken');
     }
 
     return this._sendToken(newUser, 201, req, res);
   }
 
   @httpPost('/login')
-  public async login(@request() req: Request, @response() res: Response, next: NextFunction) {
+  public async login(
+    @request() req: Request,
+    @response() res: Response,
+    @next() next: NextFunction
+  ) {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return next(new BaseControllerError('Empty username or password', 401));
+      return res.status(401).send('Empty username or password');
     }
     const user = await this._userService.authenticateUser(email, password);
-    if (!user) {
-      return next(new BaseControllerError('Invalid username or password', 401));
+    if (!user || !(await User.correctPassword(password, user.password))) {
+      return res.status(401).send('Invalid username or password');
     }
     return this._sendToken(user, 200, req, res);
   }
 
   @httpPost('/login-oauth')
-  public async loginOauth(@request() req: Request, @response() res: Response, next: NextFunction) {
+  public async loginOauth(
+    @request() req: Request,
+    @response() res: Response,
+    @next() next: NextFunction
+  ) {
     const { user: u, token } = req.body;
 
     if (!u || !token) {
-      return next(new BaseControllerError('Incorrect data', 401));
+      return res.status(401).send('Incorrect data');
     }
     const user = await this._userService.authenticateUserOauth(u, token);
     if (!user) {
-      return next(new BaseControllerError('Invalid username or password', 401));
+      return res.status(401).send('Invalid username or password');
     }
     return this._sendToken(user, 200, req, res);
   }

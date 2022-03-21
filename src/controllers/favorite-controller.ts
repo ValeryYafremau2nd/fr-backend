@@ -7,7 +7,8 @@ import {
   BaseHttpController,
   httpGet,
   httpPost,
-  httpDelete
+  httpDelete,
+  next
 } from 'inversify-express-utils';
 import FavoritesService from '../services/favorites-service';
 import { inject } from 'inversify';
@@ -24,14 +25,16 @@ class FavoriteController extends BaseHttpController {
     super();
   }
   @httpGet('/matches', TYPES.ProtectMiddleware)
-  public async getMatches(@request() req: UserRequest, @response() res: Response, next: NextFunction) {
+  public async getMatches(
+    @request() req: UserRequest,
+    @response() res: Response,
+    @next() next: NextFunction
+  ) {
     let matches;
     try {
       matches = await this._favoriteService.getMatches(req.user.id);
-    } catch(e) {
-      return next(
-          new BaseControllerError('Couldn\'t get matches.', 500)
-        );
+    } catch (e) {
+      return res.status(500).send("Couldn't get matches.");
     }
     return res.json({
       status: 'success',
@@ -40,15 +43,16 @@ class FavoriteController extends BaseHttpController {
     });
   }
   @httpGet('/teams', TYPES.ProtectMiddleware)
-  public async getTeams(@request() req: UserRequest, @response() res: Response, next: NextFunction) {
+  public async getTeams(
+    @request() req: UserRequest,
+    @response() res: Response,
+    @next() next: NextFunction
+  ) {
     let teams;
     try {
-
-    teams = await this._favoriteService.getTeams(req.user.id);
-    } catch(e) {
-      return next(
-          new BaseControllerError('Couldn\'t get teams.', 500)
-        );
+      teams = await this._favoriteService.getTeams(req.user.id);
+    } catch (e) {
+      return res.status(500).send("Couldn't get teams.");
     }
     return res.json({
       status: 'success',
@@ -58,17 +62,16 @@ class FavoriteController extends BaseHttpController {
   }
 
   @httpPost('/match', TYPES.ProtectMiddleware)
-  public async postMatch(@request() req: UserRequest, @response() res: Response, next: NextFunction) {
+  public async postMatch(
+    @request() req: UserRequest,
+    @response() res: Response,
+    @next() next: NextFunction
+  ) {
     let match;
     try {
-       match = await this._favoriteService.addMatch(
-        req.user.id,
-        req.body.match
-      );
-    } catch(e) {
-      return next(
-          new BaseControllerError('Couldn\'t add a match .', 500)
-        );
+      match = await this._favoriteService.addMatch(req.user.id, req.body.match);
+    } catch (e) {
+      return res.status(500).send("Couldn't add a match.");
     }
     return res.json({
       status: 'success',
@@ -77,17 +80,16 @@ class FavoriteController extends BaseHttpController {
   }
 
   @httpPost('/team', TYPES.ProtectMiddleware)
-  public async postTeam(@request() req: UserRequest, @response() res: Response, next: NextFunction) {
+  public async postTeam(
+    @request() req: UserRequest,
+    @response() res: Response,
+    @next() next: NextFunction
+  ) {
     let team;
     try {
-      team = await this._favoriteService.addTeam(
-        req.user.id,
-        req.body.team
-      );
-    } catch(e) {
-      return next(
-          new BaseControllerError('Couldn\'t add a team .', 500)
-        );
+      team = await this._favoriteService.addTeam(req.user.id, req.body.team);
+    } catch (e) {
+      return res.status(500).send("Couldn't add a team.");
     }
     return res.json({
       status: 'success',
@@ -99,7 +101,8 @@ class FavoriteController extends BaseHttpController {
   public async deleteMatch(
     @requestParam('id') id: string,
     @request() req: UserRequest,
-    @response() res: Response, next: NextFunction
+    @response() res: Response,
+    @next() next: NextFunction
   ) {
     let match;
     try {
@@ -107,10 +110,8 @@ class FavoriteController extends BaseHttpController {
         req.user.id,
         +req.params.id
       );
-    } catch(e) {
-      return next(
-          new BaseControllerError('Couldn\'t delete a match .', 500)
-        );
+    } catch (e) {
+      return res.status(500).send("Couldn't delete a match.");
     }
     return res.json({
       status: 'success',
@@ -122,7 +123,8 @@ class FavoriteController extends BaseHttpController {
   public async deleteTeam(
     @requestParam('id') id: string,
     @request() req: UserRequest,
-    @response() res: Response, next: NextFunction
+    @response() res: Response,
+    @next() next: NextFunction
   ) {
     let team;
     try {
@@ -130,10 +132,8 @@ class FavoriteController extends BaseHttpController {
         req.user.id,
         +req.params.id
       );
-    } catch(e) {
-      return next(
-          new BaseControllerError('Couldn\'t delete a team .', 500)
-        );
+    } catch (e) {
+      return res.status(500).send("Couldn't delete a team.");
     }
     return res.json({
       status: 'success',
