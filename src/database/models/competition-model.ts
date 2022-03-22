@@ -42,6 +42,11 @@ competitionSchema.statics.getMatchesToNotify = async function () {
       }
     },
     {
+      $addFields: {
+        'matches.emblemUrl': '$emblemUrl'
+      }
+    },
+    {
       $unwind: '$matches'
     },
     {
@@ -71,7 +76,13 @@ competitionSchema.statics.getMatches = async function (
     {
       $project: {
         _id: 0,
+        emblemUrl: 1,
         matches: 1
+      }
+    },
+    {
+      $addFields: {
+        'matches.emblemUrl': '$emblemUrl'
       }
     },
     {
@@ -127,7 +138,13 @@ competitionSchema.statics.getAllTrackedMatches = async function (
     {
       $project: {
         _id: 0,
+        emblemUrl: 1,
         matches: 1
+      }
+    },
+    {
+      $addFields: {
+        'matches.emblemUrl': '$emblemUrl'
       }
     },
     {
