@@ -12,7 +12,13 @@ competitionSchema.statics.getMatchesById = async function (matches: number[]) {
     {
       $project: {
         _id: 0,
+        emblemUrl: 1,
         matches: 1
+      }
+    },
+    {
+      $addFields: {
+        'matches.emblemUrl': '$emblemUrl'
       }
     },
     {
@@ -38,7 +44,13 @@ competitionSchema.statics.getMatchesToNotify = async function () {
     {
       $project: {
         _id: 0,
+        emblemUrl: 1,
         matches: 1
+      }
+    },
+    {
+      $addFields: {
+        'matches.emblemUrl': '$emblemUrl'
       }
     },
     {
@@ -64,13 +76,13 @@ competitionSchema.statics.getMatchesToNotify = async function () {
 };
 
 competitionSchema.statics.getMatches = async function (
-  competitionId: number,
+  code: string,
   matches: number[]
 ) {
   return this.aggregate([
     {
       $match: {
-        id: competitionId
+        code
       }
     },
     {
@@ -87,6 +99,11 @@ competitionSchema.statics.getMatches = async function (
     },
     {
       $unwind: '$matches'
+    },
+    {
+      $match: {
+        'matches.status': { $not: { $eq: 'CANCELLED' } },
+      },
     },
     {
       $addFields: {
@@ -120,7 +137,7 @@ competitionSchema.statics.getMatches = async function (
     },
     {
       $addFields: {
-        competitionId
+        code
       }
     },
     {
@@ -149,6 +166,11 @@ competitionSchema.statics.getAllTrackedMatches = async function (
     },
     {
       $unwind: '$matches'
+    },
+    {
+      $match: {
+        'matches.status': { $not: { $eq: 'CANCELLED' } },
+      },
     },
     {
       $addFields: {
@@ -214,13 +236,13 @@ competitionSchema.statics.getAllTrackedMatches = async function (
 };
 
 competitionSchema.statics.getStandings = async function (
-  competitionId: number,
+  code: string,
   trackedTeams: number[]
 ) {
   const standings = await this.aggregate([
     {
       $match: {
-        id: competitionId
+        code
       }
     },
     {
@@ -246,7 +268,7 @@ competitionSchema.statics.getStandings = async function (
     },
     {
       $addFields: {
-        competitionId
+        code
       }
     }
   ]);
@@ -260,7 +282,7 @@ competitionSchema.statics.getStandings = async function (
 };
 
 competitionSchema.pre(/^find/, function (next: HookNextFunction) {
-  (this as any).select('-_id name id emblemUrl');
+  (this as any).select('-_id name id emblemUrl code');
   next();
 });
 const Competition = model<ICompetition, ICompetitionModel>(

@@ -4,13 +4,13 @@ import Competition from '../database/models/competition-model';
 
 @injectable()
 class CompetitionService {
-  async getMatches(competitionId: number, user: string) {
+  async getMatches(code: string, user: string) {
     const matches = await Favorite.findOne({ user }).select('matches -_id');
-    return Competition.getMatches(competitionId, matches.matches);
+    return Competition.getMatches(code, matches.matches);
   }
-  async getStandings(competitionId: number, user: string) {
+  async getStandings(code: string, user: string) {
     const trackedTeams = await Favorite.findOne({ user }).select('teams -_id');
-    return Competition.getStandings(competitionId, trackedTeams.teams);
+    return Competition.getStandings(code, trackedTeams.teams);
   }
   async getLeagues() {
     return await Competition.find({});

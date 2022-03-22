@@ -7,14 +7,14 @@ import IStanding from './standing-interface';
 
 interface ICompetitionModel extends Model<ICompetition> {
   getMatches(
-    competitionId: number,
+    code: string,
     matches: number[]
   ): Promise<IMatchesResult[]>;
   getMatchesById(matches: number[]): Promise<IMatchesResult[]>;
   getMatchesToNotify(): Promise<IMatchesResult[]>;
   getAllTrackedMatches(favorite: IFavorite): Promise<IMatchesResult[]>;
   getStandings(
-    competitionId: number,
+    code: string,
     trackedTeams: number[]
   ): Promise<IStanding[]>;
 }

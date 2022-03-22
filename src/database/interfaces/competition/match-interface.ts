@@ -2,6 +2,7 @@ interface IMatch {
   id: number;
   utcDate: string;
   status: string;
+  emblemUrl: string;
   matchDay: string;
   tracked: boolean;
   homeTeam: {

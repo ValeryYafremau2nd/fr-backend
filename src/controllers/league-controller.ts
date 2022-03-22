@@ -23,9 +23,9 @@ class LeagueController extends BaseHttpController {
     super();
   }
 
-  @httpGet('/:id/matches', TYPES.ProtectMiddleware)
+  @httpGet('/:code/matches', TYPES.ProtectMiddleware)
   public async getMatches(
-    @requestParam('id') id: string,
+    @requestParam('code') code: string,
     @request() req: UserRequest,
     @response() res: Response,
     @next() next: NextFunction
@@ -33,7 +33,7 @@ class LeagueController extends BaseHttpController {
     let matches;
     try {
       matches = await this._competitionService.getMatches(
-        +req.params.id,
+        code,
         req.user.id
       );
     } catch (e) {
@@ -46,9 +46,9 @@ class LeagueController extends BaseHttpController {
     });
   }
 
-  @httpGet('/:id/standings', TYPES.ProtectMiddleware)
+  @httpGet('/:code/standings', TYPES.ProtectMiddleware)
   public async getStandings(
-    @requestParam('id') id: string,
+    @requestParam('code') code: string,
     @request() req: UserRequest,
     @response() res: Response,
     @next() next: NextFunction
@@ -56,7 +56,7 @@ class LeagueController extends BaseHttpController {
     let standings;
     try {
       standings = await this._competitionService.getStandings(
-        +req.params.id,
+        code,
         req.user.id
       );
     } catch (e) {
