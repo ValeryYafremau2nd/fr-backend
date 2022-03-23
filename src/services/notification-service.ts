@@ -62,12 +62,11 @@ class NotificationService {
         body: `The match has just finished.`,
         icon: 'https://valeryyafremau2nd.github.io/match-tracker/assets/icons/256%20x%20256%20-%20BMP%20(32-bit).png',
         image: 'https://valeryyafremau2nd.github.io/match-tracker/assets/icons/256%20x%20256%20-%20BMP%20(32-bit).png',
+        badge: 'https://valeryyafremau2nd.github.io/match-tracker/assets/icons/256%20x%20256%20-%20BMP%20(32-bit).png',
         vibrate: [100, 50, 100],
         data: {
           dateOfArrival: Date.now(),
           primaryKey: 1,
-          image: 'https://valeryyafremau2nd.github.io/match-tracker/assets/icons/256%20x%20256%20-%20BMP%20(32-bit).png',
-          icon: 'https://valeryyafremau2nd.github.io/match-tracker/assets/icons/256%20x%20256%20-%20BMP%20(32-bit).png',
         },
       }
     });
@@ -81,12 +80,11 @@ class NotificationService {
         body: `The match has just started.`,
         icon: 'https://valeryyafremau2nd.github.io/match-tracker/assets/icons/256%20x%20256%20-%20BMP%20(32-bit).png',
         image: 'https://valeryyafremau2nd.github.io/match-tracker/assets/icons/256%20x%20256%20-%20BMP%20(32-bit).png',
+        badge: 'https://valeryyafremau2nd.github.io/match-tracker/assets/icons/256%20x%20256%20-%20BMP%20(32-bit).png',
         vibrate: [100, 50, 100],
         data: {
           dateOfArrival: Date.now(),
-          primaryKey: 1,
-          image: 'https://valeryyafremau2nd.github.io/match-tracker/assets/icons/256%20x%20256%20-%20BMP%20(32-bit).png',
-          icon: 'https://valeryyafremau2nd.github.io/match-tracker/assets/icons/256%20x%20256%20-%20BMP%20(32-bit).png',
+          primaryKey: 1
         }
       }
     });
