@@ -62,7 +62,7 @@ class NotificationService {
         body: `The match has just finished.`,
         icon: 'https://valeryyafremau2nd.github.io/match-tracker/assets/icons/256%20x%20256%20-%20BMP%20(32-bit).png',
         image: 'https://valeryyafremau2nd.github.io/match-tracker/assets/icons/256%20x%20256%20-%20BMP%20(32-bit).png',
-        badge: 'https://valeryyafremau2nd.github.io/match-tracker/assets/icons/badge.png',
+        badge: 'https://valeryyafremau2nd.github.io/match-tracker/assets/icons/badge_1.png',
         vibrate: [100, 50, 100],
         data: {
           dateOfArrival: Date.now(),
@@ -80,7 +80,7 @@ class NotificationService {
         body: `The match has just started.`,
         icon: 'https://valeryyafremau2nd.github.io/match-tracker/assets/icons/256%20x%20256%20-%20BMP%20(32-bit).png',
         image: 'https://valeryyafremau2nd.github.io/match-tracker/assets/icons/256%20x%20256%20-%20BMP%20(32-bit).png',
-        badge: 'https://valeryyafremau2nd.github.io/match-tracker/assets/icons/badge.png',
+        badge: 'https://valeryyafremau2nd.github.io/match-tracker/assets/icons/badge_1.png',
         vibrate: [100, 50, 100],
         data: {
           dateOfArrival: Date.now(),
