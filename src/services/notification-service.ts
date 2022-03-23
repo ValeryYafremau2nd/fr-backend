@@ -61,7 +61,7 @@ class NotificationService {
       notification: {
         title: `${match.homeTeam.name} ${match.score.fullTime.homeTeam} : ${match.score.fullTime.awayTeam} ${match.awayTeam.name}`,
         body: `The match has just finished.`,
-        icon: match.emblemUrl,
+        image: match.emblemUrl,
         vibrate: [100, 50, 100],
         data: {
           dateOfArrival: Date.now(),
@@ -77,7 +77,7 @@ class NotificationService {
       notification: {
         title: `${match.homeTeam.name} vs ${match.awayTeam.name}`,
         body: `The match has just started.`,
-        icon: match.emblemUrl,
+        image: match.emblemUrl,
         vibrate: [100, 50, 100],
         data: {
           dateOfArrival: Date.now(),
