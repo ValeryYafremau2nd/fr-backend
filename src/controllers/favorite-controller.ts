@@ -34,13 +34,9 @@ class FavoriteController extends BaseHttpController {
     try {
       matches = await this._favoriteService.getMatches(req.user.id);
     } catch (e) {
-      return res.status(500).send("Couldn't get matches.");
+      return res.formatter.serverError("Couldn't get matches");
     }
-    return res.json({
-      status: 'success',
-      length: matches.length,
-      results: matches
-    });
+    return res.formatter.ok(matches);
   }
   @httpGet('/teams', TYPES.ProtectMiddleware)
   public async getTeams(
@@ -52,13 +48,9 @@ class FavoriteController extends BaseHttpController {
     try {
       teams = await this._favoriteService.getTeams(req.user.id);
     } catch (e) {
-      return res.status(500).send("Couldn't get teams.");
+      return res.formatter.serverError("Couldn't get teams");
     }
-    return res.json({
-      status: 'success',
-      length: teams.length,
-      results: teams
-    });
+    return res.formatter.ok(teams);
   }
 
   @httpPost('/match', TYPES.ProtectMiddleware)
@@ -71,12 +63,9 @@ class FavoriteController extends BaseHttpController {
     try {
       match = await this._favoriteService.addMatch(req.user.id, req.body.match);
     } catch (e) {
-      return res.status(500).send("Couldn't add a match.");
+      return res.formatter.serverError("Couldn't add a match");
     }
-    return res.json({
-      status: 'success',
-      data: match
-    });
+    return res.formatter.created(match);
   }
 
   @httpPost('/team', TYPES.ProtectMiddleware)
@@ -89,12 +78,9 @@ class FavoriteController extends BaseHttpController {
     try {
       team = await this._favoriteService.addTeam(req.user.id, req.body.team);
     } catch (e) {
-      return res.status(500).send("Couldn't add a team.");
+      return res.formatter.serverError("Couldn't add a team.");
     }
-    return res.json({
-      status: 'success',
-      data: team
-    });
+    return res.formatter.created(team);
   }
 
   @httpDelete('/match/:id', TYPES.ProtectMiddleware)
@@ -111,12 +97,9 @@ class FavoriteController extends BaseHttpController {
         +req.params.id
       );
     } catch (e) {
-      return res.status(500).send("Couldn't delete a match.");
+      return res.formatter.serverError("Couldn't delete a match");
     }
-    return res.json({
-      status: 'success',
-      data: match
-    });
+    return res.formatter.ok(match);
   }
 
   @httpDelete('/team/:id', TYPES.ProtectMiddleware)
@@ -133,12 +116,9 @@ class FavoriteController extends BaseHttpController {
         +req.params.id
       );
     } catch (e) {
-      return res.status(500).send("Couldn't delete a team.");
+      return res.formatter.serverError("Couldn't delete a team");
     }
-    return res.json({
-      status: 'success',
-      data: team
-    });
+    return res.formatter.ok(team);
   }
 }
 export default FavoriteController;

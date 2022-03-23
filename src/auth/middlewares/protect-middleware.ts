@@ -31,17 +31,17 @@ class ProtectMiddleware extends BaseMiddleware {
       token = req.cookies.jwt;
     }
     if (!token) {
-      return res
-        .status(401)
-        .send('You are not logged in! Please log in to get access.');
+      return res.formatter.forbidden(
+        'You are not logged in! Please log in to get access'
+      );
     }
 
     if (!jwt.decode(token)) {
-      return res.status(401).send('Token is empty.');
+      return res.formatter.forbidden('Token is empty');
     }
 
     if (Date.now() >= (jwt.decode(token) as any).exp * 1000) {
-      return res.status(401).send('Token expired.');
+      return res.formatter.forbidden('Token expired');
     }
 
     const decoded = await (promisify(jwt.verify) as any)(
@@ -50,7 +50,7 @@ class ProtectMiddleware extends BaseMiddleware {
     );
     const currentUser = await User.findById(decoded.id);
     if (!currentUser) {
-      return res.status(401).send('User not found.');
+      return res.formatter.forbidden('User not found');
     }
 
     req.user = currentUser;

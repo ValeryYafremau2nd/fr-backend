@@ -57,7 +57,9 @@ class UserService {
         upsert: true
       }
     );
-    const user = await User.findOne({ email: name });
+    const user = await User.findOne({ email: name }).select(
+      '+password -passwordConfirm'
+    );
     const fav = await Favorite.findOne({ user: user._id });
     if (!fav) {
       Favorite.create({

@@ -37,7 +37,7 @@ class AuthController extends BaseHttpController {
       req.body.password
     );
     if (!newUser) {
-      return res.status(401).send('This name is already taken');
+      return res.formatter.unauthorized('This name is already taken');
     }
 
     return this._sendToken(newUser, 201, req, res);
@@ -52,11 +52,11 @@ class AuthController extends BaseHttpController {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(401).send('Empty username or password');
+      return res.formatter.unauthorized('Empty username or password');
     }
     const user = await this._userService.authenticateUser(email, password);
     if (!user || !(await User.correctPassword(password, user.password))) {
-      return res.status(401).send('Invalid username or password');
+      return res.formatter.unauthorized('Incorrect username or password');
     }
     return this._sendToken(user, 200, req, res);
   }
@@ -70,11 +70,11 @@ class AuthController extends BaseHttpController {
     const { user: u, token } = req.body;
 
     if (!u || !token) {
-      return res.status(401).send('Incorrect data');
+      return res.formatter.unauthorized('Incorrect data');
     }
     const user = await this._userService.authenticateUserOauth(u, token);
     if (!user) {
-      return res.status(401).send('Invalid username or password');
+      return res.formatter.unauthorized('Invalid username or password');
     }
     return this._sendToken(user, 200, req, res);
   }
@@ -85,7 +85,7 @@ class AuthController extends BaseHttpController {
       expires: new Date(Date.now() + 10 * 1000),
       httpOnly: true
     });
-    res.status(200).json({ status: 'success' });
+    res.formatter.ok({ status: 'success' });
   }
 
   private _sendToken(

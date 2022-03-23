@@ -26,9 +26,7 @@ const server = new InversifyExpressServer(mainContainer);
 server.setConfig(mainLoader);
 server.setErrorConfig(app => {
   app.use((err: Error, req: Request, res: Response) => {
-    return res
-      .status(500)
-      .send({ status: 'erorr', message: 'Unknown server error.' });
+    return res.formatter.serverError('Unknown server error');
   });
 });
 

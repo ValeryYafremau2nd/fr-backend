@@ -5,12 +5,14 @@ import * as cookieParser from 'cookie-parser';
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
 import * as Sentry from '@sentry/node';
+import { responseEnhancer } from 'express-response-formatter';
 
 const helmet = require('helmet');
 const morgan = require('morgan');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const rateLimit = require('express-rate-limit');
+
 /*
 const client = require('prom-client');
 const register = new client.Registry();
@@ -31,6 +33,7 @@ register.registerMetric(httpRequestTimer);
 */
 async function mainLoader(app: express.Application) {
   app.use(Sentry.Handlers.requestHandler());
+  app.use(responseEnhancer());
   app.enable('trust proxy');
   if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));

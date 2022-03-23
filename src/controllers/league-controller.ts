@@ -32,18 +32,11 @@ class LeagueController extends BaseHttpController {
   ) {
     let matches;
     try {
-      matches = await this._competitionService.getMatches(
-        code,
-        req.user.id
-      );
+      matches = await this._competitionService.getMatches(code, req.user.id);
     } catch (e) {
-      return res.status(500).send("Couldn't get matches.");
+      return res.formatter.serverError("Couldn't get matches");
     }
-    return res.json({
-      status: 'success',
-      results: matches.length,
-      data: matches
-    });
+    return res.formatter.ok(matches);
   }
 
   @httpGet('/:code/standings', TYPES.ProtectMiddleware)
@@ -60,13 +53,9 @@ class LeagueController extends BaseHttpController {
         req.user.id
       );
     } catch (e) {
-      return res.status(500).send("Couldn't get standings.");
+      return res.formatter.serverError("Couldn't get standings");
     }
-    return res.json({
-      status: 'success',
-      results: standings.length,
-      data: standings
-    });
+    return res.formatter.ok(standings);
   }
 
   @httpGet('/', TYPES.ProtectMiddleware)
@@ -79,9 +68,9 @@ class LeagueController extends BaseHttpController {
     try {
       leagues = await this._competitionService.getLeagues();
     } catch (e) {
-      return res.status(500).send("Couldn't get leagues.");
+      return res.formatter.serverError("Couldn't get leagues");
     }
-    return res.json(leagues);
+    return res.formatter.ok(leagues);
   }
 }
 export default LeagueController;

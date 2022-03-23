@@ -41,9 +41,9 @@ class NotificationController extends BaseHttpController {
     try {
       await Favorite.addSubscription(req.user.id, subscription);
     } catch (e) {
-      return res.status(500).send("Couldn't subscribe to notifications.");
+      return res.formatter.serverError("Couldn't subscribe to notifications");
     }
-    return res.status(201).json({});
+    return res.formatter.created({});
   }
 }
 export default NotificationController;

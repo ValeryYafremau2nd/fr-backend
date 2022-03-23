@@ -102,8 +102,8 @@ competitionSchema.statics.getMatches = async function (
     },
     {
       $match: {
-        'matches.status': { $not: { $eq: 'CANCELLED' } },
-      },
+        'matches.status': { $not: { $eq: 'CANCELLED' } }
+      }
     },
     {
       $addFields: {
@@ -169,8 +169,8 @@ competitionSchema.statics.getAllTrackedMatches = async function (
     },
     {
       $match: {
-        'matches.status': { $not: { $eq: 'CANCELLED' } },
-      },
+        'matches.status': { $not: { $eq: 'CANCELLED' } }
+      }
     },
     {
       $addFields: {
