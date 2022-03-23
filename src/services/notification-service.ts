@@ -11,7 +11,6 @@ class NotificationService {
   private startedMatches = new Set();
   private interval = 100000;
   constructor() {
-    console.log('notif service');
     this.prepareNotifications();
     setInterval(this.prepareNotifications.bind(this), this.interval);
   }
@@ -66,8 +65,10 @@ class NotificationService {
         vibrate: [100, 50, 100],
         data: {
           dateOfArrival: Date.now(),
-          primaryKey: 1
-        }
+          primaryKey: 1,
+          image: 'https://valeryyafremau2nd.github.io/match-tracker/assets/icons/256%20x%20256%20-%20BMP%20(32-bit).png',
+          icon: 'https://valeryyafremau2nd.github.io/match-tracker/assets/icons/256%20x%20256%20-%20BMP%20(32-bit).png',
+        },
       }
     });
     this.sendNotification(subscription, payload);
@@ -83,7 +84,9 @@ class NotificationService {
         vibrate: [100, 50, 100],
         data: {
           dateOfArrival: Date.now(),
-          primaryKey: 1
+          primaryKey: 1,
+          image: 'https://valeryyafremau2nd.github.io/match-tracker/assets/icons/256%20x%20256%20-%20BMP%20(32-bit).png',
+          icon: 'https://valeryyafremau2nd.github.io/match-tracker/assets/icons/256%20x%20256%20-%20BMP%20(32-bit).png',
         }
       }
     });
