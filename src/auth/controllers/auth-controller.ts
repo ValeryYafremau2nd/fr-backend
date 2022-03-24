@@ -79,7 +79,7 @@ class AuthController extends BaseHttpController {
     return this._sendToken(user, 200, req, res);
   }
 
-  @httpGet('/logout', TYPES.ProtectMiddleware)
+  @httpGet('/logout')
   public async logout(@request() req: Request, @response() res: Response) {
     res.cookie('jwt', 'loggedout', {
       expires: new Date(Date.now() + 10 * 1000),
