@@ -11,7 +11,9 @@ class FavoritesService {
     return Competition.getAllTrackedMatches(favorite);
   }
   async getTeams(user: string) {
+    console.log(user);
     const teamIds = await Favorite.getTeams(user);
+    console.log(teamIds.teams.length);
     return Team.find({
       id: {
         $in: teamIds.teams

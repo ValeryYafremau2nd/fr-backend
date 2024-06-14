@@ -7,7 +7,7 @@ const TYPES = {
   AuthController: Symbol.for('AuthController'),
   NotificationController: Symbol.for('NotificationController'),
   DBConnection: Symbol.for('DBConnection'),
-  CachingService: Symbol.for('CachingService'),
+  // CachingService: Symbol.for('CachingService'),
   NotificationService: Symbol.for('NotificationService')
 };
 

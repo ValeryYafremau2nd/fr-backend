@@ -6,7 +6,7 @@ import CompetitionService from '../services/competition-service';
 import FavoritesService from '../services/favorites-service';
 import DBConnection from '../database/db-connection';
 import ConfigService from '../config/config-service';
-import CachingService from '../database/caching-service';
+// import CachingService from '../database/caching-service';
 import NotificationService from '../services/notification-service';
 
 const mainContainer = new Container();
@@ -23,7 +23,7 @@ mainContainer
 
 mainContainer.bind<ConfigService>(TYPES.ConfigService).to(ConfigService);
 
-mainContainer.bind<CachingService>(TYPES.CachingService).to(CachingService);
+//mainContainer.bind<CachingService>(TYPES.CachingService).to(CachingService);
 
 mainContainer.bind<DBConnection>(TYPES.DBConnection).to(DBConnection);
 

@@ -34,7 +34,7 @@ const ap2p = server.build();
 ap2p.listen(process.env.PORT || 3000);
 
 // heroku never sleeps
-const https = require('https');
+/*const https = require('https');
 setInterval(() => {
   https.get('https://guarded-beyond-86562.herokuapp.com');
-}, 300000);
+}, 300000);*/

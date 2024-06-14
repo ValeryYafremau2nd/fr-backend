@@ -286,7 +286,7 @@ competitionSchema.pre(/^find/, function (next: HookNextFunction) {
   next();
 });
 const Competition = model<ICompetition, ICompetitionModel>(
-  'competition',
+  'competitions',
   competitionSchema
 );
 

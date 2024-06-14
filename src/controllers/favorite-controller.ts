@@ -48,6 +48,7 @@ class FavoriteController extends BaseHttpController {
     try {
       teams = await this._favoriteService.getTeams(req.user.id);
     } catch (e) {
+      console.log(e);
       return res.formatter.serverError("Couldn't get teams");
     }
     return res.formatter.ok(teams);
