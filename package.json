@@ -46,7 +46,7 @@
     "inversify": "^6.0.1",
     "inversify-express-utils": "^6.4.3",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.13.14",
+    "mongoose": "^5.13.15",
     "morgan": "^1.10.0",
     "redis": "^4.0.3",
     "reflect-metadata": "^0.1.13",
